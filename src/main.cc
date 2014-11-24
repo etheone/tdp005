@@ -2,10 +2,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-using namespace std;
-
 const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 800;
+
+using namespace std;
+
 
 int main(int argc, char* argv[])
 {
@@ -21,12 +22,12 @@ int main(int argc, char* argv[])
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
 
 	//MAKE THE SCALE RENDERING SMOOTHER
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear")
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 	//render at a virtual resolution then stretch to actual resolution
 	SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	//main loop
-	bool running{true}
+	bool running{true};
 	while (running)
 	{
 		//clear screen
@@ -47,7 +48,4 @@ int main(int argc, char* argv[])
 
 	SDL_Quit();
 	return 0;
-}
-	}
-
 }
