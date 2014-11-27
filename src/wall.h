@@ -1,7 +1,7 @@
 /*
  *  Wall class declaration
  */
-// hej
+// hejjj
 
 class shot;
 
