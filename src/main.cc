@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <emil>
+#include <emilen>
 
 const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 800;
