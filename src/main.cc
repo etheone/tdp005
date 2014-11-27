@@ -1,7 +1,6 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <emilen>
 
 const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 800;
@@ -113,6 +112,8 @@ int main(int argc, char* argv[])
 
 		// Create a rectangle!
 		SDL_Rect draftRect;
+		draftRect.w = draftWidth;
+		draftRect.h = draftHeight;
 
 		SDL_Rect draftRect2;
 		draftRect2.x = -100;
@@ -140,8 +141,6 @@ int main(int argc, char* argv[])
 				{
 					draftRect.x = event.motion.x - (draftWidth/2);
 					draftRect.y = event.motion.y - (draftHeight/2);
-					draftRect.w = draftWidth;
-					draftRect.h = draftHeight;
 				}
 				else if (event.type == SDL_MOUSEBUTTONDOWN)
 				{
