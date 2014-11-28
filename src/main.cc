@@ -1,6 +1,5 @@
 #include <iostream>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include "Gameengine.h"
 
 const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 800;
@@ -8,107 +7,55 @@ const int SCREEN_HEIGHT = 800;
 using namespace std;
 
 
-/**
-* Log an SDL error with some error message to the output stream of our choice
-* @param os The output stream to write the message to
-* @param msg The error message to write, format will be msg error: SDL_GetError()
-*/
-void logSDLError(std::ostream &os, const std::string &msg)
-{
-	os << msg << " error: " << SDL_GetError() << std::endl;
-}
-
-SDL_Texture* loadTexture(const string &file, SDL_Renderer *ren){
-	// Initialize to nullptr to avoid dangling pointer issues
-	SDL_Texture *texture = nullptr;
-	// Load the image
-	SDL_Surface *loadedImage = SDL_LoadBMP(file.c_str());
-	// If the loading went ok, convert to texture and return the texture
-	if (loadedImage != nullptr){
-		texture = SDL_CreateTextureFromSurface(ren, loadedImage);
-		SDL_FreeSurface(loadedImage);
-		// Make sure converting went ok too
-		if (texture == nullptr){
-			logSDLError(std::cout, "CreateTextureFromSurface");
-		}
-	}
-	else {
-		logSDLError(std::cout, "LoadBMP");
-	}
-	return texture;
-}
-
 
 int main(int argc, char* argv[])
 {
-	// initializing SDL
+
+	//class init.
+	Game_Engine G;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
 		cerr << "Error initializing SDL" << endl;
 		exit(1);
 	}
-
 	//create the window
-	SDL_Window* window = SDL_CreateWindow("SDL_Test",SDL_WINDOWPOS_UNDEFINED,
-													SDL_WINDOWPOS_UNDEFINED,
-													SCREEN_WIDTH,SCREEN_HEIGHT,
-													0);
-	// Standard error-handling and cleanup for creating a window.
+	SDL_Window* window = SDL_CreateWindow("SDL_Test",SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+														SCREEN_WIDTH,SCREEN_HEIGHT, 0);
 	if (window == nullptr)
-		{
-		cerr << "SDL_CreateWindow Error: " << SDL_GetError() << endl;
+	{
+		G.logSDLError(cerr, "SDL_CreateWindow");
 		SDL_Quit();
 		return 1;
 	}
 
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);  // 0 gives ACCELERATED flag?.
-
-	// Standard error-handling and cleanup for the renderer
-	if (renderer == nullptr)
-	{
-		SDL_DestroyWindow(window);
-		std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
-		SDL_Quit();
-		return 1;
-	}
+			if (renderer == nullptr)
+			{
+				SDL_DestroyWindow(window);
+				G.logSDLError(cerr, "SDL_CreateRenderer");
+				SDL_Quit();
+				return 1;
+			}
 
 	//MAKE THE SCALE RENDERING SMOOTHER
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 	//render at a virtual resolution then stretch to actual resolution
 	SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	// load draft
-		SDL_Texture* draft{nullptr};
-		int draftWidth{0};
-		int draftHeight{0};
-		{
-			SDL_Surface* temp = IMG_Load("draft.png");
-			if (temp == nullptr)
-				// Error-handling ... again.
-			{
-				SDL_DestroyRenderer(renderer);
-				SDL_DestroyWindow(window);
-				cerr << "SDL_LoadBMP Error: " << SDL_GetError() << endl;
-				SDL_Quit();
-				return 1;
-			}
 
-			draft = SDL_CreateTextureFromSurface(renderer, temp);
-			// ERROR_HANDLER! EVERYWHERE!!!:O
-			if (draft == nullptr)
-			{
-				SDL_DestroyRenderer(renderer);
-				SDL_DestroyWindow(window);
-				cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << endl;
-				SDL_Quit();
-				return 1;
-			}
+	// load draft with these values
+	int draftWidth{0};
+	int draftHeight{0};
+	const char* ship_img{"draft.png"};
+	SDL_Texture* draft = G.loadTexture(draftWidth, draftHeight, ship_img, renderer);
+	if (draft == nullptr)
+	{
+		SDL_DestroyRenderer(renderer);
+		SDL_DestroyWindow(window);
+		SDL_Quit();
+		return 1;
+	}
 
-			draftWidth = temp->w;
-			draftHeight = temp->h;
-
-			SDL_FreeSurface(temp);
-		}
 
 		// Create a rectangle!
 		SDL_Rect draftRect;
