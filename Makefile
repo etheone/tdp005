@@ -9,15 +9,21 @@ LFLAGS=-lSDL2main -lSDL2 -lSDL2_image
 
 all: Starcrossed
 
-Starcrossed: main.o Gameengine.o 
+Starcrossed: main.o Gameengine.o wall.o Sprite.o Player.o
 	$(CC) *.o  $(LFLAGS) -o Starcrossed
 
 main.o: $(SRC_DIR)/main.cc
 	$(CC) $(CFLAGS) $(SRC_DIR)/main.cc
+
+Sprite.o: $(SRC_DIR)/Sprite.cpp $(SRC_DIR)/Sprite.h
+	$(CC) $(CFLAGS) $(SRC_DIR)/Sprite.cpp
 	
-Gameengine.o: $(SRC_DIR)/Gameengine.cpp $(SRC_DIR)/Gameengine.h
-	$(CC) $(CFLAGS) $(SRC_DIR)/Gameengine.cpp
+Player.o: $(SRC_DIR)/Player.cpp $(SRC_DIR)/Player.h
+	$(CC) $(CFLAGS) $(SRC_DIR)/Player.cpp
+	
+wall.o: $(SRC_DIR)/wall.cpp $(SRC_DIR)/wall.h
+	$(CC) $(CFLAGS) $(SRC_DIR)/wall.cpp
 	
 
-.PHONY clean:
-	rm -f main
+clean:
+	rm -rf*.o Starcrossed
