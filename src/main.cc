@@ -46,9 +46,13 @@ int main(int argc, char* argv[])
 	// load draft with these values
 	int draftWidth{0};
 	int draftHeight{0};
+	int wallHeight{0};
+	int wallWidth{0};
 	const char* ship_img{"draft.png"};
+	const char* wall_img{"wall.png"};
 	SDL_Texture* draft = G.loadTexture(draftWidth, draftHeight, ship_img, renderer);
-	if (draft == nullptr)
+	SDL_Texture* wall = G.loadTexture(wallWidth, wallHeight, wall_img, renderer);
+	if (draft == nullptr || wall == nullptr)
 	{
 		SDL_DestroyRenderer(renderer);
 		SDL_DestroyWindow(window);
@@ -68,10 +72,16 @@ int main(int argc, char* argv[])
 		draftRect2.w = draftWidth;
 		draftRect2.h = draftHeight;
 
+		SDL_Rect wallRect;
+		wallRect.x = 0;
+		wallRect.y = 0;
+		wallRect.w = wallWidth;
+		wallRect.h = wallHeight;
+
 	int count{0};
 	int angle{0};
 
-	//main loop
+	// MAIN LOOP
 	bool running{true};
 	while (running)
 	{
@@ -102,6 +112,7 @@ int main(int argc, char* argv[])
 		SDL_RenderClear(renderer);
 		SDL_RenderCopyEx(renderer, draft, nullptr, &draftRect, angle, nullptr, SDL_FLIP_HORIZONTAL); // draftRect gives size.
 		SDL_RenderCopy(renderer, draft, nullptr, &draftRect2); // draftRect gives size.
+		SDL_RenderCopy(renderer, wall, nullptr, &wallRect);
 		//draw things
 
 		//show the newly drawn things

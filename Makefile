@@ -1,8 +1,5 @@
 # Kompilatorn som ska användas:
 CC=g++
-#CXXFLAGS=-Wall -Wextra -std=c++11 -Wno-unused-parameter
-#SDL_FLAGS=`sdl2-config --libs --cflags` -lSDL2_image
-
 SRC_DIR=src
 # Flaggorna till kompilatorn:
 CFLAGS=-g -c -std=c++11 -Wall -Wextra -Wpedantic -ggdb -Wno-unused-parameter -I$(SRC_DIR)
