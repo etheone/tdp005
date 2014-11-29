@@ -18,6 +18,8 @@ public:
 	void set_new_position(int x, int y);
 	int get_x();
 	int get_y();
+	double get_half_width();
+	double get_half_height();
 
 private:
 

@@ -14,7 +14,21 @@ Player::Player(int x, int y) : Sprite(x, y)
 
 Player::~Player()
 {
+	if (image != nullptr)
+	{
 	SDL_DestroyTexture(image);
+	image = nullptr;
+	}
+}
+
+double Player::get_half_height()
+{
+	return rectangle.h/2;
+}
+
+double Player::get_half_width()
+{
+	return rectangle.w/2;
 }
 
 int Player::get_x()
