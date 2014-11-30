@@ -8,6 +8,7 @@
 #include "PlayState.h"
 #include <math.h>
 
+
 Play_State::Play_State(SDL_Renderer*& renderer) :
 renderer{renderer}, running{true}, player{nullptr}
 {
@@ -36,34 +37,17 @@ void Play_State::set_up_map()
 {
 }
 
-double calculate_angle(int diff_x, int diff_y)
+double calculate_angle(double diff_x, double diff_y)
 {
 	const double rad_to_degree{180.0000 / 3.1416};
-	std::cout << "now " << diff_x << diff_y << std::endl;
-	return atan2 (double(diff_y), double(diff_x)) * rad_to_degree;
-
-	/*if(diff_y < 0)
-	{
-		return atan (diff_x / diff_y) * -rad_to_degree;
-	}
-	else if (diff_y >= 0)
-	{
-		if (diff_x < 0)
-		{
-			return (atan (diff_y / diff_x) * rad_to_degree) - 90;
-		}
-		else if (diff_x > 0)
-		{
-			return (atan (diff_y / diff_x) *rad_to_degree) + 90;
-		}
-	}
-	return 180;*/
+	return atan2 (diff_y, diff_x) * rad_to_degree;
 }
 
 bool Play_State::play_game()
 {
 	int angle{0};
 	int count{0};
+	bool space_down{false};
 	while(running)
 	{
 		SDL_Event event;
@@ -74,23 +58,32 @@ bool Play_State::play_game()
 			{
 				running = false;
 			}
+			else if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_SPACE))
+			{
+				space_down = true;
+			}
+			else if (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_SPACE))
+			{
+				space_down = false;
+			}
 			else if (event.type == SDL_MOUSEMOTION)
 			{
-				int diff_x{event.motion.x - player->get_x()};
-				int diff_y{event.motion.y - player->get_y()};
-				if(diff_x == 0 || diff_y == 0)
+				double diff_x{event.motion.x - player->get_x()};
+				double diff_y{event.motion.y - player->get_y()};
+				if(abs(diff_x) < 3 || abs(diff_y) < 3)
 				{
 					++count;
-					std::cout << "NU" ;
 				}
-				else {count = 3;}
-				if(count > 2)
+				else
+				{
+					count = 6;
+				}
+				if(count > 5 && !space_down)
 				{
 					angle = calculate_angle(diff_x,diff_y);
 					count = 0;
 				}
 
-				std::cout << angle << std::endl;
 				player->set_angle(angle);
 				player->set_new_position(
 						event.motion.x - (player->get_half_width()),
@@ -101,9 +94,6 @@ bool Play_State::play_game()
 			{
 				std::cout << "click" << std::endl;
 			}
-
-			player->render_copy(renderer);
-
 		}
 
 		//clear screen
