@@ -47,7 +47,7 @@ void Sprite::loadTexture(const char*& file, SDL_Renderer* renderer)
 void Sprite::render_copy(SDL_Renderer* renderer)
 {
 	SDL_RenderCopyEx(renderer, image, nullptr, &rectangle,
-					angle, nullptr, SDL_FLIP_HORIZONTAL);
+					angle+90, nullptr, SDL_FLIP_HORIZONTAL);
 }
 
 void Sprite::set_angle(double new_angle)

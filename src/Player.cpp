@@ -33,12 +33,12 @@ double Player::get_half_width()
 
 int Player::get_x()
 {
-	return rectangle.x;
+	return rectangle.x + get_half_width();
 }
 
 int Player::get_y()
 {
-	return rectangle.y;
+	return rectangle.y + get_half_height();
 }
 
 void Player::set_new_position(int x, int y)

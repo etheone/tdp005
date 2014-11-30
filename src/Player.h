@@ -16,7 +16,9 @@ public:
 	~Player();
 
 	void set_new_position(int x, int y);
+	//returns bottom right x_value
 	int get_x();
+	//returns bottom right y value
 	int get_y();
 	double get_half_width();
 	double get_half_height();
