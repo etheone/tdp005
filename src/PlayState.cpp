@@ -46,14 +46,27 @@ double calculate_angle(double diff_x, double diff_y)
 bool Play_State::play_game()
 {
 	int angle{0};
-	int count{0};
 	bool space_down{false};
+
+	int count{0};
+	double diff_x{0};
+	double diff_y{0};
+
+	const Uint32 targetFrameDelay = 10;
+	Uint32 startTime = SDL_GetTicks();
+	Uint32 lastFrameTime = startTime;
+
 	while(running)
 	{
+		// calculate deltaTime to use for updates
+		// done just before updates are done for maximum accuracy
+		Uint32 frameDelay = SDL_GetTicks() - lastFrameTime;
+		float deltaTime = frameDelay / 1000.0f;
+		lastFrameTime += frameDelay;
+
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
 		{
-
 			if (event.type == SDL_QUIT)
 			{
 				running = false;
@@ -68,20 +81,15 @@ bool Play_State::play_game()
 			}
 			else if (event.type == SDL_MOUSEMOTION)
 			{
-				double diff_x{event.motion.x - player->get_x()};
-				double diff_y{event.motion.y - player->get_y()};
-				if(abs(diff_x) < 3 || abs(diff_y) < 3)
+				diff_x += (event.motion.x - player->get_x());
+				diff_y += (event.motion.y - player->get_y());
+				++count;
+				if(count > 7 && !space_down)
 				{
-					++count;
-				}
-				else
-				{
-					count = 6;
-				}
-				if(count > 5 && !space_down)
-				{
-					angle = calculate_angle(diff_x,diff_y);
+					angle = calculate_angle(diff_x, diff_y);
 					count = 0;
+					diff_x = 0;
+					diff_y = 0;
 				}
 
 				player->set_angle(angle);
@@ -106,9 +114,14 @@ bool Play_State::play_game()
 		SDL_RenderPresent(renderer);
 
 
-
-			SDL_Delay(10);
-
+		// wait before drawing the next frame
+		frameDelay = SDL_GetTicks() - lastFrameTime;
+		if (targetFrameDelay > frameDelay)
+		{
+			// only wait if it's actually needed
+			Uint32 sleepTime = targetFrameDelay - frameDelay;
+			SDL_Delay(sleepTime);
+		}
 	}
 
 	return false;
