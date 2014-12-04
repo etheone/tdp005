@@ -7,7 +7,8 @@
 
 #include "Player.h"
 
-Player::Player(int x, int y) : Sprite(x, y)
+Player::Player(int x, int y, double angle, const char*& img_file)
+: Sprite(x, y, angle, img_file)
 {
 	// TODO Auto-generated constructor stub
 }
@@ -21,12 +22,12 @@ Player::~Player()
 	}
 }
 
-double Player::get_half_height()
+int Player::get_half_height()
 {
 	return rectangle.h/2;
 }
 
-double Player::get_half_width()
+int Player::get_half_width()
 {
 	return rectangle.w/2;
 }
@@ -41,10 +42,5 @@ int Player::get_y()
 	return rectangle.y + get_half_height();
 }
 
-void Player::set_new_position(int x, int y)
-{
-rectangle.x = x;
-rectangle.y = y;
-}
 
 
