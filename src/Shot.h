@@ -15,10 +15,15 @@ public:
 		const char*& img_file, int bounce_count, int speed);
 	~Shot();
 
+	int get_height();
+
+	int get_width();
 	//returns bottom right x_value
 	int get_x();
 	//returns bottom right y value
 	int get_y();
+
+	int get_bounce_count();
 
 private:
 	int bounce_count;

@@ -8,7 +8,7 @@
 #include "Player.h"
 
 Player::Player(int x, int y, double angle, const char*& img_file)
-: Sprite(x, y, angle, img_file)
+: Sprite(x, y, angle, img_file), health{1}
 {
 	// TODO Auto-generated constructor stub
 }
@@ -20,6 +20,11 @@ Player::~Player()
 	SDL_DestroyTexture(image);
 	image = nullptr;
 	}
+}
+
+int Player::get_health()
+{
+	return health;
 }
 
 int Player::get_half_height()

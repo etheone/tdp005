@@ -12,9 +12,10 @@
 class Player : public Sprite
 {
 public:
-	Player(int x, int y, double angle, const char*& img_file);
+	Player(int x, int y, double angle, const char*& img_file, int health);
 	~Player();
 
+	int get_health()
 	//returns bottom right x_value
 	int get_x();
 	//returns bottom right y value
@@ -23,6 +24,7 @@ public:
 	int get_half_height();
 
 private:
+	int health;
 
 };
 

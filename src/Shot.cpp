@@ -19,6 +19,16 @@ Shot::~Shot()
 	img_file = nullptr;
 }
 
+int Shot::get_height()
+{
+	return rectangle.h;
+}
+
+int Shot::get_width()
+{
+	return rectangle.w;
+}
+
 int Shot::get_x()
 {
 	return rectangle.x;
@@ -27,5 +37,10 @@ int Shot::get_x()
 int Shot::get_y()
 {
 	return rectangle.y;
+}
+
+int Shot::get_bounce_count()
+{
+	return bounce_count;
 }
 
