@@ -9,7 +9,7 @@ LFLAGS=-lSDL2main -lSDL2 -lSDL2_image
 
 all: Starcrossed
 
-Starcrossed: main.o PlayState.o wall.o Sprite.o Player.o
+Starcrossed: main.o PlayState.o wall.o Sprite.o Player.o AbstractGamestate.o
 	$(CC) *.o  $(LFLAGS) -o Starcrossed
 
 main.o: $(SRC_DIR)/main.cc
@@ -26,6 +26,9 @@ wall.o: $(SRC_DIR)/wall.cpp $(SRC_DIR)/wall.h
 
 PlayState.o: $(SRC_DIR)/PlayState.cpp $(SRC_DIR)/PlayState.h
 	$(CC) $(CFLAGS) $(SRC_DIR)/PlayState.cpp	
+	
+AbstractGamestate.o: $(SRC_DIR)/AbstractGamestate.cpp $(SRC_DIR)/AbstractGamestate.h
+	$(CC) $(CFLAGS) $(SRC_DIR)/AbstractGamestate.cpp
 
 clean:
 	rm -rf *.o Starcrossed

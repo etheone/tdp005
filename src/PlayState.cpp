@@ -10,8 +10,8 @@
 
 using namespace std;
 
-Play_State::Play_State(SDL_Renderer*& renderer) :
-renderer{renderer}, running{true}, player{nullptr}
+Play_State::Play_State(SDL_Window*& window) :
+		Abstract_Gamestate(window), running{true}, player{nullptr}
 {
 	const char* ship_img{"draft.png"};
 
@@ -28,7 +28,7 @@ Play_State::~Play_State()
 //	}
 	delete player;
 	player = nullptr;
-	//SDL_DestroyRenderer(renderer);
+	SDL_DestroyRenderer(renderer);
 	renderer = nullptr;
 
 	// TODO Auto-generated destructor stub
@@ -51,6 +51,8 @@ void Play_State::set_up_level()
 		sprite->loadTexture(renderer);
 	}
 }
+
+//void handle_keyboard_input(Player& player)
 
 void Play_State::draw_level()
 {

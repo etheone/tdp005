@@ -8,18 +8,15 @@
 #ifndef SRC_PLAYSTATE_H_
 #define SRC_PLAYSTATE_H_
 
+#include "AbstractGamestate.h"
 #include "Player.h"
 #include "wall.h"
 #include <vector>
-#include <string>
 
-const int SCREEN_WIDTH = 1200;
-const int SCREEN_HEIGHT = 800;
-
-class Play_State
+class Play_State : public Abstract_Gamestate
 {
 public:
-	Play_State(SDL_Renderer*& renderer);
+	Play_State(SDL_Window*& window);
 	~Play_State();
 
 	bool play_game();
@@ -28,7 +25,6 @@ public:
 
 
 private:
-	SDL_Renderer*& renderer;
 	bool running;
 	std::vector<Sprite*> level_items;
 	Player* player;

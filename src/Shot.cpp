@@ -1,8 +1,9 @@
 #include "Shot.h"
 
 
-Shot::Shot(int x, int y, double angle, const char*& img_file, bounce_count, speed)
-//		: Sprite(x, y, angle, img_file), bounce_count{0}, speed{0}
+Shot::Shot(int x, int y, double angle,
+		const char*& img_file, int bounce_count, int speed)
+	: Sprite(x, y, angle, img_file), bounce_count{0}, speed{0}
 {
 
 }

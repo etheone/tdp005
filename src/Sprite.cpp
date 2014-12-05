@@ -24,7 +24,7 @@ void Sprite::logSDLError(std::ostream &os, const std::string &msg)
 	os << msg << " error: " << SDL_GetError() << std::endl;
 }
 
-void Sprite::loadTexture(SDL_Renderer* renderer)
+void Sprite::loadTexture(SDL_Renderer*& renderer)
 {
 	SDL_Surface* temp_loaded_image = IMG_Load(img_file);
 			// If the loading went ok, convert to texture and return the texture
@@ -46,7 +46,7 @@ void Sprite::loadTexture(SDL_Renderer* renderer)
 			}
 }
 
-void Sprite::render_copy(SDL_Renderer* renderer)
+void Sprite::render_copy(SDL_Renderer*& renderer)
 {
 	SDL_RenderCopyEx(renderer, image, nullptr, &rectangle,
 					angle, nullptr, SDL_FLIP_HORIZONTAL);
