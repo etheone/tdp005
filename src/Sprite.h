@@ -11,25 +11,28 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-
-
+#include <string>
 
 class Sprite
 {
 public:
 	virtual ~Sprite() = 0;
-	Sprite(int x, int y);
+	Sprite(int x, int y, double angle, const char*& img_file);
 
 	void logSDLError(std::ostream &os, const std::string &msg);
-	void loadTexture(const char*& file, SDL_Renderer* renderer);
+	void loadTexture(SDL_Renderer* renderer);
 	void render_copy(SDL_Renderer* renderer);
 	void set_angle(double new_angle);
+
+
+	void set_position(int x, int y);
 
 
 protected:
 	SDL_Texture* image;
 	SDL_Rect rectangle;
 	double angle;
+	const char* img_file;
 };
 
 #endif /* SRC_SPRITE_H_ */

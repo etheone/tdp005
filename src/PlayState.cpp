@@ -8,14 +8,15 @@
 #include "PlayState.h"
 #include <math.h>
 
+using namespace std;
 
 Play_State::Play_State(SDL_Renderer*& renderer) :
 renderer{renderer}, running{true}, player{nullptr}
 {
 	const char* ship_img{"draft.png"};
 
-	player = new Player(0,0);
-	player->loadTexture(ship_img, renderer);
+	player = new Player(0, 0, 0, ship_img);
+	player->loadTexture(renderer);
 	// TODO Auto-generated constructor stub
 }
 
@@ -33,8 +34,30 @@ Play_State::~Play_State()
 	// TODO Auto-generated destructor stub
 }
 
-void Play_State::set_up_map()
+void Play_State::set_up_level()
 {
+	const char* x_wall{"outer_x_wall.png"};
+	const char* y_wall{"outer_y_wall.png"};
+	const char* random_wall{"draft.png"};
+
+	level_items.push_back(new Wall(0, 0, 0, x_wall));
+	level_items.push_back(new Wall(0, SCREEN_HEIGHT-15, 0, x_wall));
+	level_items.push_back(new Wall(SCREEN_WIDTH-15, 0, 0, y_wall));
+	level_items.push_back(new Wall(0, 0, 0, y_wall));
+	level_items.push_back(new Wall(200,200, 140, random_wall));
+
+	for(Sprite*& sprite : level_items)
+	{
+		sprite->loadTexture(renderer);
+	}
+}
+
+void Play_State::draw_level()
+{
+	for(Sprite*& sprite : level_items)
+	{
+		sprite->render_copy(renderer);
+	}
 }
 
 double calculate_angle(double diff_x, double diff_y)
@@ -51,6 +74,7 @@ bool Play_State::play_game()
 	int count{0};
 	double diff_x{0};
 	double diff_y{0};
+	set_up_level();
 
 	const Uint32 targetFrameDelay = 10;
 	Uint32 startTime = SDL_GetTicks();
@@ -61,7 +85,7 @@ bool Play_State::play_game()
 		// calculate deltaTime to use for updates
 		// done just before updates are done for maximum accuracy
 		Uint32 frameDelay = SDL_GetTicks() - lastFrameTime;
-		float deltaTime = frameDelay / 1000.0f;
+		//float deltaTime = frameDelay / 1000.0f;
 		lastFrameTime += frameDelay;
 
 		SDL_Event event;
@@ -84,16 +108,16 @@ bool Play_State::play_game()
 				diff_x += (event.motion.x - player->get_x());
 				diff_y += (event.motion.y - player->get_y());
 				++count;
-				if(count > 7 && !space_down)
+				if(count > 5 && !space_down)
 				{
-					angle = calculate_angle(diff_x, diff_y);
+					angle = calculate_angle(diff_x, diff_y) + 90;
 					count = 0;
 					diff_x = 0;
 					diff_y = 0;
+					player->set_angle(angle);
 				}
 
-				player->set_angle(angle);
-				player->set_new_position(
+				player->set_position(
 						event.motion.x - (player->get_half_width()),
 						event.motion.y - (player->get_half_height())
 										);
@@ -105,9 +129,12 @@ bool Play_State::play_game()
 		}
 
 		//clear screen
+		//SDL_SetRelativeMouseMode(SDL_TRUE);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
+		draw_level();
 		player->render_copy(renderer);
+
 		//draw things
 
 		//show the newly drawn things

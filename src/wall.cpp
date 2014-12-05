@@ -1,7 +1,20 @@
 #include "wall.h"
 
 
-Wall::Wall(int x1, int x2 , int y1, int y2) : x1{x1}, x2{x2}, y1{y1}, y2{y2}
+Wall::Wall(int x, int y, double angle, const char*& img_file)
+		: Sprite(x, y, angle, img_file)
 {
 
 }
+
+Wall::~Wall()
+{
+
+	if (image != nullptr)
+		{
+		SDL_DestroyTexture(image);
+		image = nullptr;
+		}
+	img_file = nullptr;
+}
+

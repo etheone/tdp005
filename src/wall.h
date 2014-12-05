@@ -1,23 +1,17 @@
 /*
  *  Wall class declaration
  */
-// hejjj
-
-class shot;
-
 #ifndef WALL_H
 #define WALL_H
 
+#include "Sprite.h"
 
-class Wall {
+class Wall : public Sprite
+{
 
 public:
-
-    Wall(int x1, int x2, int y1, int y2);
-    // Wall dimensions
-
-    static const int HEIGHT{25};
-    static const int WIDTH{25};
+	Wall(int x, int y, double angle, const char*& img_file);
+	~Wall();
 
     // Functions
     int get_x();
@@ -28,11 +22,6 @@ public:
     //void SHOTCALCULATORFUNCTION(Shot *shot);
 
 private:
-    // Wall position
-    int x1;
-    int x2;
-    int y1;
-    int y2;
 };
 
 #endif

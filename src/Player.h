@@ -12,16 +12,15 @@
 class Player : public Sprite
 {
 public:
-	Player( int x, int y);
+	Player(int x, int y, double angle, const char*& img_file);
 	~Player();
 
-	void set_new_position(int x, int y);
 	//returns bottom right x_value
 	int get_x();
 	//returns bottom right y value
 	int get_y();
-	double get_half_width();
-	double get_half_height();
+	int get_half_width();
+	int get_half_height();
 
 private:
 

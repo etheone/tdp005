@@ -1,12 +1,7 @@
 #include <iostream>
-#include "wall.h"
 #include "PlayState.h"
 
-const int SCREEN_WIDTH = 1200;
-const int SCREEN_HEIGHT = 900;
-
 using namespace std;
-
 
 int main(int argc, char* argv[])
 {
@@ -44,7 +39,6 @@ int main(int argc, char* argv[])
 
 	// CLASS INIT
 	Play_State Play(renderer);
-	Wall outer_left_wall(0, 25, 0, 900);
 
 	// MAIN LOOP
 	Play.play_game();
