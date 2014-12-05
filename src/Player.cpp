@@ -7,7 +7,7 @@
 
 #include "Player.h"
 
-Player::Player(int x, int y, double angle, const char*& img_file)
+Player::Player(int x, int y, double angle, const char*& img_file, int health)
 : Sprite(x, y, angle, img_file), health{1}
 {
 	// TODO Auto-generated constructor stub

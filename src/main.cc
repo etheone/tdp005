@@ -16,9 +16,5 @@ int main(int argc, char* argv[])
 	// MAIN LOOP
 	Play.play_game();
 
-
-
-
-
 	return 0;
 }

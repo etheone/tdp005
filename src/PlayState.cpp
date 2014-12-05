@@ -15,7 +15,7 @@ Play_State::Play_State(SDL_Renderer*& renderer) :
 {
 	const char* ship_img{"draft.png"};
 
-	player = new Player(0, 0, 0, ship_img);
+	player = new Player(0, 0, 0, ship_img, 1);
 	player->loadTexture(renderer);
 	// TODO Auto-generated constructor stub
 }
