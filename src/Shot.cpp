@@ -1,11 +1,12 @@
 #include "Shot.h"
 
+using namespace std;
 
 Shot::Shot(int x, int y, double angle,
-		const char*& img_file, int bounce_count, int speed)
-	: Sprite(x, y, angle, img_file), bounce_count{0}, speed{0}
+		const char*& img_file, int bounce_count,
+		int speed, SDL_Renderer*& renderer)
+	: Sprite(x, y, angle, img_file, renderer), bounce_count{0}, speed{0}
 {
-
 }
 
 Shot::~Shot()
@@ -17,6 +18,12 @@ Shot::~Shot()
 		image = nullptr;
 		}
 	img_file = nullptr;
+}
+
+void Shot::update_pos()
+{
+	rectangle.x += speed * cos(angle*(PI/180) + 90);
+	rectangle.y += speed * sin(angle*(PI/180) + 90);
 }
 
 int Shot::get_height()

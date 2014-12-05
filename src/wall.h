@@ -10,7 +10,8 @@ class Wall : public Sprite
 {
 
 public:
-	Wall(int x, int y, double angle, const char*& img_file);
+	Wall(int x, int y, double angle, const char*& img_file,
+			SDL_Renderer*& renderer);
 	~Wall();
 
     // Functions

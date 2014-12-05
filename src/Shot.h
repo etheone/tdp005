@@ -12,18 +12,21 @@ class Shot : public Sprite
 {
 public:
 	Shot(int x, int y, double angle,
-		const char*& img_file, int bounce_count, int speed);
+		const char*& img_file, int bounce_count,
+		int speed, SDL_Renderer*& renderer );
 	~Shot();
 
 	int get_height();
 
 	int get_width();
-	//returns bottom right x_value
+	//returns middle-point x_value
 	int get_x();
-	//returns bottom right y value
+	//returns middle-point y value
 	int get_y();
 
 	int get_bounce_count();
+
+	void update_pos();
 
 private:
 	int bounce_count;

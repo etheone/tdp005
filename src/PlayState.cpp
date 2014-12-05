@@ -15,8 +15,7 @@ Play_State::Play_State(SDL_Renderer*& renderer) :
 {
 	const char* ship_img{"draft.png"};
 
-	player = new Player(0, 0, 0, ship_img, 1);
-	player->loadTexture(renderer);
+	player = new Player(0, 0, 0, ship_img,renderer, 1);
 	// TODO Auto-generated constructor stub
 }
 
@@ -28,7 +27,12 @@ Play_State::~Play_State()
 //	}
 	delete player;
 	player = nullptr;
-	for(Sprite* s : level_items)
+	for(Sprite*& s : level_items)
+	{
+		delete s;
+		s = nullptr;
+	}
+	for(Shot*& s : shots)
 	{
 		delete s;
 		s = nullptr;
@@ -44,16 +48,12 @@ void Play_State::set_up_level()
 	const char* y_wall{"outer_y_wall.png"};
 	const char* random_wall{"draft.png"};
 
-	level_items.push_back(new Wall(0, 0, 0, x_wall));
-	level_items.push_back(new Wall(0, SCREEN_HEIGHT-15, 0, x_wall));
-	level_items.push_back(new Wall(SCREEN_WIDTH-15, 0, 0, y_wall));
-	level_items.push_back(new Wall(0, 0, 0, y_wall));
-	level_items.push_back(new Wall(200,200, 140, random_wall));
+	level_items.push_back(new Wall(0, 0, 0, x_wall, renderer));
+	level_items.push_back(new Wall(0, SCREEN_HEIGHT-15, 0, x_wall, renderer));
+	level_items.push_back(new Wall(SCREEN_WIDTH-15, 0, 0, y_wall, renderer));
+	level_items.push_back(new Wall(0, 0, 0, y_wall, renderer));
+	level_items.push_back(new Wall(200,200, 140, random_wall, renderer));
 
-	for(Sprite*& sprite : level_items)
-	{
-		sprite->loadTexture(renderer);
-	}
 }
 
 //void handle_keyboard_input(Player& player)
@@ -64,12 +64,25 @@ void Play_State::draw_level()
 	{
 		sprite->render_copy(renderer);
 	}
+
+	for(Shot*& shot : shots)
+	{
+		shot->render_copy(renderer);
+	}
 }
 
 double calculate_angle(double diff_x, double diff_y)
 {
 	const double rad_to_degree{180.0000 / 3.1416};
 	return atan2 (diff_y, diff_x) * rad_to_degree;
+}
+
+void Play_State::update_shots()
+{
+	for(Shot*& shot: shots)
+	{
+		shot->update_pos();
+	}
 }
 
 bool Play_State::play_game()
@@ -81,6 +94,8 @@ bool Play_State::play_game()
 	double diff_x{0};
 	double diff_y{0};
 	set_up_level();
+
+	const char* shot_img{"wall.png"};
 
 	const Uint32 targetFrameDelay = 10;
 	Uint32 startTime = SDL_GetTicks();
@@ -130,7 +145,9 @@ bool Play_State::play_game()
 			}
 			else if (event.type == SDL_MOUSEBUTTONDOWN)
 			{
-				std::cout << "click" << std::endl;
+				shots.push_back(new Shot(player->get_infront_x(),
+										player->get_infront_y(),
+										player->get_angle(), shot_img, 0, 1, renderer));
 			}
 		}
 
@@ -140,6 +157,7 @@ bool Play_State::play_game()
 		SDL_RenderClear(renderer);
 		draw_level();
 		player->render_copy(renderer);
+
 
 		//draw things
 
