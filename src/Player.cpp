@@ -27,16 +27,6 @@ int Player::get_health()
 	return health;
 }
 
-int Player::get_half_height()
-{
-	return rectangle.h/2;
-}
-
-int Player::get_half_width()
-{
-	return rectangle.w/2;
-}
-
 int Player::get_x()
 {
 	return rectangle.x + get_half_width();

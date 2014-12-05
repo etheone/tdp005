@@ -11,7 +11,8 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <math.h>
+#include <vector>
+#include <cmath>
 
 const double PI = 3.14159265;
 
@@ -22,22 +23,36 @@ public:
 	Sprite(int x, int y, double angle, const char*& img_file,
 			SDL_Renderer*& renderer);
 
-	virtual int get_infront_x();
-	virtual int get_infront_y();
+	int get_infront_x();
+	int get_infront_y();
+	double get_angle();
+	double get_exact_x() const;
+	double get_exact_y() const;
+	double get_exact_bottom_y() const;
+	double get_exact_right_x() const;
+
+	double get_half_width();
+	double get_half_height();
+
 
 	void logSDLError(std::ostream &os, const std::string &msg);
 	void loadTexture(SDL_Renderer*& renderer);
 	void render_copy(SDL_Renderer*& renderer);
 	void set_angle(double new_angle);
 
-	double get_angle();
+	bool intersect(Sprite*&) const;
 
-	void set_position(int x, int y);
+	void set_position(double x, double y);
 
 
 protected:
 	SDL_Texture* image;
 	SDL_Rect rectangle;
+
+	// Gives very accurate double coordinates for top_left.
+	double exact_x;
+	double exact_y;
+
 	double angle;
 	const char* img_file;
 };

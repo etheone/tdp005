@@ -14,15 +14,17 @@ public:
 			SDL_Renderer*& renderer);
 	~Wall();
 
-    // Functions
-    int get_x();
-    int get_y();
+    // Returns the exact position of original "top left corner"
+	// after rotation.
+    double get_x1();
+    double get_y1();
     void draw(); // Troligtvis inte här
     bool bounding_box();
     //int predict(Shot *shot);
     //void SHOTCALCULATORFUNCTION(Shot *shot);
 
 private:
+
 };
 
 #endif

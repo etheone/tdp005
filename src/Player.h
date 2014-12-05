@@ -21,8 +21,6 @@ public:
 	int get_x();
 	//returns bottom right y value
 	int get_y();
-	int get_half_width();
-	int get_half_height();
 
 private:
 	int health;

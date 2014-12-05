@@ -5,9 +5,10 @@ using namespace std;
 Shot::Shot(int x, int y, double angle,
 		const char*& img_file, int bounce_count,
 		int speed, SDL_Renderer*& renderer)
-	: Sprite(x, y, angle, img_file, renderer), bounce_count{0}, speed{0}
+	: Sprite(x, y, angle, img_file, renderer), bounce_count{3}, speed{speed}
 {
 }
+
 
 Shot::~Shot()
 {
@@ -22,28 +23,20 @@ Shot::~Shot()
 
 void Shot::update_pos()
 {
-	rectangle.x += speed * cos(angle*(PI/180) + 90);
-	rectangle.y += speed * sin(angle*(PI/180) + 90);
+	exact_x += speed * sin(angle*(PI/180));
+	exact_y += speed * -cos(angle*(PI/180));
+	rectangle.x = round(exact_x);
+	rectangle.y = round(exact_y);
 }
 
-int Shot::get_height()
+void Shot::set_bounce_count(int x)
 {
-	return rectangle.h;
+	bounce_count = x;
 }
 
-int Shot::get_width()
+void Shot::reduce_bounce_count()
 {
-	return rectangle.w;
-}
-
-int Shot::get_x()
-{
-	return rectangle.x;
-}
-
-int Shot::get_y()
-{
-	return rectangle.y;
+	--bounce_count;
 }
 
 int Shot::get_bounce_count()
@@ -51,3 +44,12 @@ int Shot::get_bounce_count()
 	return bounce_count;
 }
 
+int Shot::get_speed()
+{
+	return speed;
+}
+
+void Shot::angle_to_queue(pair<double, double> p, double a)
+{
+	angles_queue[p] = a;
+}

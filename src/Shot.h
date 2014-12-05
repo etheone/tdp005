@@ -7,6 +7,7 @@
 #define SRC_SHOT_H_
 
 #include "Sprite.h"
+#include <map>
 
 class Shot : public Sprite
 {
@@ -16,19 +17,17 @@ public:
 		int speed, SDL_Renderer*& renderer );
 	~Shot();
 
-	int get_height();
+	void angle_to_queue(std::pair<double, double>, double a);
+	void reduce_bounce_count();
 
-	int get_width();
-	//returns middle-point x_value
-	int get_x();
-	//returns middle-point y value
-	int get_y();
-
+	void set_bounce_count(int x);
 	int get_bounce_count();
+	int get_speed();
 
 	void update_pos();
 
 private:
+	std::map<std::pair<double, double>, double> angles_queue;
 	int bounce_count;
 	int speed;
 

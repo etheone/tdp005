@@ -12,7 +12,6 @@
 #include "Player.h"
 #include "wall.h"
 #include "Shot.h"
-#include <vector>
 
 class Play_State : public Abstract_Gamestate
 {
@@ -23,6 +22,7 @@ public:
 	bool play_game();
 	void set_up_level();
 	void draw_level();
+	void simulate_shot_path(Shot*& shot);
 
 	void update_shots();
 

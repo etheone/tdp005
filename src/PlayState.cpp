@@ -6,7 +6,6 @@
  */
 
 #include "PlayState.h"
-#include <math.h>
 
 using namespace std;
 
@@ -46,13 +45,14 @@ void Play_State::set_up_level()
 {
 	const char* x_wall{"outer_x_wall.png"};
 	const char* y_wall{"outer_y_wall.png"};
-	const char* random_wall{"draft.png"};
+	const char* random_wall{"200_inner_wall.png"};
 
 	level_items.push_back(new Wall(0, 0, 0, x_wall, renderer));
 	level_items.push_back(new Wall(0, SCREEN_HEIGHT-15, 0, x_wall, renderer));
 	level_items.push_back(new Wall(SCREEN_WIDTH-15, 0, 0, y_wall, renderer));
 	level_items.push_back(new Wall(0, 0, 0, y_wall, renderer));
 	level_items.push_back(new Wall(200,200, 140, random_wall, renderer));
+	level_items.push_back(new Wall(400,400, 90, random_wall, renderer));
 
 }
 
@@ -85,6 +85,44 @@ void Play_State::update_shots()
 	}
 }
 
+// Behövs till fienderna...
+void Play_State::simulate_shot_path(Shot*& shot)
+{
+	const char* test_wall{"enemy_shot.png"};
+
+	double temp_x{shot->get_exact_x()};
+	double temp_y{shot->get_exact_y()};
+	double temp_angle{shot->get_angle()};
+	int temp_bounce_count{shot->get_bounce_count()};
+
+	while(shot->get_bounce_count() > 0)
+	{
+		for(Sprite*& wall : level_items)
+		{
+			if(shot->intersect(wall))
+			{
+				cout << shot->get_bounce_count() << endl << shot->get_angle() << endl;
+				shot->reduce_bounce_count();
+				shot->set_angle(-(shot->get_angle() - wall->get_angle()));
+				//shot->angle_to_queue(make_pair(temp_x, temp_y),shot->get_angle());
+				level_items.push_back(new Wall(shot->get_exact_x(),
+											   shot->get_exact_y(),
+												0, test_wall, renderer));
+				shot->update_pos();
+				shot->update_pos();
+				shot->update_pos();
+
+				break;
+			}
+		}
+		shot->update_pos();
+
+	}
+	shot->set_position(temp_x, temp_y);
+	shot->set_angle(temp_angle);
+	shot->set_bounce_count(temp_bounce_count);
+}
+
 bool Play_State::play_game()
 {
 	int angle{0};
@@ -95,7 +133,7 @@ bool Play_State::play_game()
 	double diff_y{0};
 	set_up_level();
 
-	const char* shot_img{"wall.png"};
+	const char* shot_img{"player_shot.png"};
 
 	const Uint32 targetFrameDelay = 10;
 	Uint32 startTime = SDL_GetTicks();
@@ -106,7 +144,7 @@ bool Play_State::play_game()
 		// calculate deltaTime to use for updates
 		// done just before updates are done for maximum accuracy
 		Uint32 frameDelay = SDL_GetTicks() - lastFrameTime;
-		//float deltaTime = frameDelay / 1000.0f;
+//		float deltaTime = frameDelay / 1000.0f;
 		lastFrameTime += frameDelay;
 
 		SDL_Event event;
@@ -147,23 +185,24 @@ bool Play_State::play_game()
 			{
 				shots.push_back(new Shot(player->get_infront_x(),
 										player->get_infront_y(),
-										player->get_angle(), shot_img, 0, 1, renderer));
+										player->get_angle(), shot_img, 3, 2, renderer));
+				simulate_shot_path(shots.back());
+
 			}
 		}
 
-		//clear screen
+
+
+		update_shots();
+
 		//SDL_SetRelativeMouseMode(SDL_TRUE);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 		draw_level();
 		player->render_copy(renderer);
 
-
-		//draw things
-
 		//show the newly drawn things
 		SDL_RenderPresent(renderer);
-
 
 		// wait before drawing the next frame
 		frameDelay = SDL_GetTicks() - lastFrameTime;
