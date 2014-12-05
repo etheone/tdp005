@@ -18,8 +18,8 @@ const int SCREEN_HEIGHT = 800;
 class Abstract_Gamestate
 {
 public:
-	Abstract_Gamestate(SDL_Window*& window);
-	virtual ~Abstract_Gamestate();
+	Abstract_Gamestate(SDL_Renderer*& renderer);
+	virtual ~Abstract_Gamestate()=0;
 
 protected:
 	SDL_Renderer* renderer;

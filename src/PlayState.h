@@ -16,7 +16,7 @@
 class Play_State : public Abstract_Gamestate
 {
 public:
-	Play_State(SDL_Window*& window);
+	Play_State(SDL_Renderer*& renderer);
 	~Play_State();
 
 	bool play_game();

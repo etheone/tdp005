@@ -1,28 +1,17 @@
 #include <iostream>
 #include "PlayState.h"
+#include "GameScreen.h"
+
 
 using namespace std;
 
 int main(int argc, char* argv[])
 {
-	if (SDL_Init(SDL_INIT_VIDEO) != 0)
-	{
-		cerr << "Error initializing SDL" << endl;
-		exit(1);
-	}
-	//create the window
-	SDL_Window* window = SDL_CreateWindow("SDL_Test",SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-														SCREEN_WIDTH,SCREEN_HEIGHT, 0);
-	if (window == nullptr)
-	{
-		cerr <<  "SDL_CreateWindow error: " <<  SDL_GetError() << endl;
-		SDL_Quit();
-		return 1;
-	}
 
+	Game_Screen G(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// CLASS INIT
-	Play_State Play(window);
+	Play_State Play(G.get_renderer());
 
 	// MAIN LOOP
 	Play.play_game();
@@ -30,9 +19,6 @@ int main(int argc, char* argv[])
 
 
 
-	//CLEANUP
-	SDL_DestroyWindow(window);
 
-	SDL_Quit();
 	return 0;
 }

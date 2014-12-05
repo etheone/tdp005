@@ -10,7 +10,7 @@
 Sprite::~Sprite()
 {
 	// TODO Auto-generated destructor stub
-//	SDL_DestroyTexture(draft);
+	//SDL_DestroyTexture(image);
 }
 
 Sprite::Sprite(int x, int y, double angle, const char*& img_file)

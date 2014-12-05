@@ -10,8 +10,8 @@
 
 using namespace std;
 
-Play_State::Play_State(SDL_Window*& window) :
-		Abstract_Gamestate(window), running{true}, player{nullptr}
+Play_State::Play_State(SDL_Renderer*& renderer) :
+		Abstract_Gamestate(renderer), running{true}, player{nullptr}
 {
 	const char* ship_img{"draft.png"};
 
@@ -28,8 +28,12 @@ Play_State::~Play_State()
 //	}
 	delete player;
 	player = nullptr;
-	SDL_DestroyRenderer(renderer);
-	renderer = nullptr;
+	for(Sprite* s : level_items)
+	{
+		delete s;
+		s = nullptr;
+	}
+
 
 	// TODO Auto-generated destructor stub
 }
