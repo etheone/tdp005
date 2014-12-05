@@ -11,6 +11,7 @@
 #include "AbstractGamestate.h"
 #include "Player.h"
 #include "wall.h"
+#include "Shot.h"
 #include <vector>
 
 class Play_State : public Abstract_Gamestate
@@ -23,10 +24,13 @@ public:
 	void set_up_level();
 	void draw_level();
 
+	void update_shots();
+
 
 private:
 	bool running;
 	std::vector<Sprite*> level_items;
+	std::vector<Shot*> shots;
 	Player* player;
 };
 

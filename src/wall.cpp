@@ -1,10 +1,10 @@
 #include "wall.h"
 
 
-Wall::Wall(int x, int y, double angle, const char*& img_file)
-		: Sprite(x, y, angle, img_file)
+Wall::Wall(int x, int y, double angle, const char*& img_file,
+		SDL_Renderer*& renderer)
+		: Sprite(x, y, angle, img_file, renderer)
 {
-
 }
 
 Wall::~Wall()

@@ -13,10 +13,12 @@ Sprite::~Sprite()
 	//SDL_DestroyTexture(image);
 }
 
-Sprite::Sprite(int x, int y, double angle, const char*& img_file)
+Sprite::Sprite(int x, int y, double angle, const char*& img_file,
+			SDL_Renderer*& renderer)
 : image{nullptr}, rectangle({ x, y, 0, 0 }),
   angle{angle}, img_file{img_file}
 {
+	loadTexture(renderer);
 }
 
 void Sprite::logSDLError(std::ostream &os, const std::string &msg)
@@ -44,6 +46,23 @@ void Sprite::loadTexture(SDL_Renderer*& renderer)
 			{
 				logSDLError(std::cerr, "LoadTexture");
 			}
+}
+
+double Sprite::get_angle()
+{
+	return angle;
+}
+
+int Sprite::get_infront_x()
+{
+	return (rectangle.x + rectangle.w/2)
+			+ sin(angle*(PI/180)) * rectangle.w/2;
+}
+
+int Sprite::get_infront_y()
+{
+	return (rectangle.y + rectangle.h/2)
+			+ -cos(angle*(PI/180)) * rectangle.h/2;
 }
 
 void Sprite::render_copy(SDL_Renderer*& renderer)

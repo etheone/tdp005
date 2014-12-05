@@ -7,7 +7,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-
+	// Creates a window and destroys the window when main is done.
 	Game_Screen G(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// CLASS INIT
