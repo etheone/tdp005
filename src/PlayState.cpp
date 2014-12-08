@@ -26,7 +26,7 @@ Play_State::~Play_State()
 //	}
 	delete player;
 	player = nullptr;
-	for(Sprite*& s : level_items)
+	for(Wall*& s : level_items)
 	{
 		delete s;
 		s = nullptr;
@@ -36,6 +36,12 @@ Play_State::~Play_State()
 		delete s;
 		s = nullptr;
 	}
+
+	for(Wall*& s : temp_shot_simulation)
+		{
+			delete s;
+			s = nullptr;
+		}
 
 
 	// TODO Auto-generated destructor stub
@@ -47,12 +53,12 @@ void Play_State::set_up_level()
 	const char* y_wall{"outer_y_wall.png"};
 	const char* random_wall{"200_inner_wall.png"};
 
-	level_items.push_back(new Wall(0, 0, 0, x_wall, renderer));
-	level_items.push_back(new Wall(0, SCREEN_HEIGHT-15, 0, x_wall, renderer));
+	level_items.push_back(new Wall(0, 0, 90, x_wall, renderer));
+	level_items.push_back(new Wall(0, SCREEN_HEIGHT-15, 90, x_wall, renderer));
 	level_items.push_back(new Wall(SCREEN_WIDTH-15, 0, 0, y_wall, renderer));
 	level_items.push_back(new Wall(0, 0, 0, y_wall, renderer));
-	level_items.push_back(new Wall(200,200, 140, random_wall, renderer));
-	level_items.push_back(new Wall(400,400, 90, random_wall, renderer));
+	level_items.push_back(new Wall(400,400, 0, random_wall, renderer));
+
 
 }
 
@@ -60,14 +66,19 @@ void Play_State::set_up_level()
 
 void Play_State::draw_level()
 {
-	for(Sprite*& sprite : level_items)
+	for(Wall*& wall : level_items)
 	{
-		sprite->render_copy(renderer);
+		wall->render_copy(renderer);
 	}
 
 	for(Shot*& shot : shots)
 	{
 		shot->render_copy(renderer);
+	}
+
+	for(Wall*& w : temp_shot_simulation)
+	{
+		w->render_copy(renderer);
 	}
 }
 
@@ -79,16 +90,25 @@ double calculate_angle(double diff_x, double diff_y)
 
 void Play_State::update_shots()
 {
-	for(Shot*& shot: shots)
+	for(vector<Shot*>::iterator it{shots.begin()}; it !=shots.end(); ++it)
+	{if(shots.size()  != 0)
 	{
-		shot->update_pos();
-	}
+		if((*it)->get_bounce_count() == 0)
+				{
+					delete *it;
+					shots.erase(it);
+					break;
+				}
+		else
+		{
+			(*it)->update_pos();
+		}
+	}}
 }
 
 // Behövs till fienderna...
 void Play_State::simulate_shot_path(Shot*& shot)
 {
-	const char* test_wall{"enemy_shot.png"};
 
 	double temp_x{shot->get_exact_x()};
 	double temp_y{shot->get_exact_y()};
@@ -97,25 +117,21 @@ void Play_State::simulate_shot_path(Shot*& shot)
 
 	while(shot->get_bounce_count() > 0)
 	{
-		for(Sprite*& wall : level_items)
+		for(Wall*& wall : level_items)
 		{
 			if(shot->intersect(wall))
 			{
-				cout << shot->get_bounce_count() << endl << shot->get_angle() << endl;
+				cout << "true" << endl;
 				shot->reduce_bounce_count();
-				shot->set_angle(-(shot->get_angle() - wall->get_angle()));
-				//shot->angle_to_queue(make_pair(temp_x, temp_y),shot->get_angle());
-				level_items.push_back(new Wall(shot->get_exact_x(),
-											   shot->get_exact_y(),
-												0, test_wall, renderer));
-				shot->update_pos();
-				shot->update_pos();
-				shot->update_pos();
-
+				shot->set_angle((-shot->get_angle() + wall->get_angle()*2));
+				shot->angle_to_queue(make_pair(shot->get_exact_x(), shot->get_exact_y()),shot->get_angle());
+				//temp_shot_simulation.push_back(new Wall(shot->get_exact_x(),
+//											   shot->get_exact_y(),
+//												0, test_wall, renderer));
 				break;
 			}
 		}
-		shot->update_pos();
+		shot->update_pos2();
 
 	}
 	shot->set_position(temp_x, temp_y);
@@ -175,7 +191,6 @@ bool Play_State::play_game()
 					diff_y = 0;
 					player->set_angle(angle);
 				}
-
 				player->set_position(
 						event.motion.x - (player->get_half_width()),
 						event.motion.y - (player->get_half_height())
@@ -185,7 +200,7 @@ bool Play_State::play_game()
 			{
 				shots.push_back(new Shot(player->get_infront_x(),
 										player->get_infront_y(),
-										player->get_angle(), shot_img, 3, 2, renderer));
+										player->get_angle(), shot_img, 5, 4, renderer));
 				simulate_shot_path(shots.back());
 
 			}
@@ -193,7 +208,10 @@ bool Play_State::play_game()
 
 
 
-		update_shots();
+		if(!shots.empty())
+		{
+				update_shots();
+		}
 
 		//SDL_SetRelativeMouseMode(SDL_TRUE);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);

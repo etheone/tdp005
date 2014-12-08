@@ -11,8 +11,10 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <algorithm>
 #include <vector>
 #include <cmath>
+#include <map>
 
 const double PI = 3.14159265;
 
@@ -37,7 +39,7 @@ public:
 
 	void logSDLError(std::ostream &os, const std::string &msg);
 	void loadTexture(SDL_Renderer*& renderer);
-	void render_copy(SDL_Renderer*& renderer);
+	virtual void render_copy(SDL_Renderer*& renderer);
 	void set_angle(double new_angle);
 
 	bool intersect(Sprite*&) const;

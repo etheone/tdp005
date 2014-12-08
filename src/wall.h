@@ -14,16 +14,12 @@ public:
 			SDL_Renderer*& renderer);
 	~Wall();
 
-    // Returns the exact position of original "top left corner"
-	// after rotation.
-    double get_x1();
-    double get_y1();
-    void draw(); // Troligtvis inte här
-    bool bounding_box();
-    //int predict(Shot *shot);
-    //void SHOTCALCULATORFUNCTION(Shot *shot);
+	void render_copy(SDL_Renderer*& renderer);
+
+	std::vector< std::pair<double, double> > get_box_container();
 
 private:
+std::vector< std::pair<double, double> > box_container;
 
 };
 

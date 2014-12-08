@@ -29,8 +29,9 @@ public:
 
 private:
 	bool running;
-	std::vector<Sprite*> level_items;
+	std::vector<Wall*> level_items;
 	std::vector<Shot*> shots;
+	std::vector<Wall*> temp_shot_simulation;
 	Player* player;
 };
 

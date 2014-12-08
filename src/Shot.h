@@ -7,7 +7,7 @@
 #define SRC_SHOT_H_
 
 #include "Sprite.h"
-#include <map>
+#include "wall.h"
 
 class Shot : public Sprite
 {
@@ -24,7 +24,10 @@ public:
 	int get_bounce_count();
 	int get_speed();
 
+	bool intersect(Wall*& w) const;
+
 	void update_pos();
+	void update_pos2();
 
 private:
 	std::map<std::pair<double, double>, double> angles_queue;
