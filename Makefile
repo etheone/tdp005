@@ -6,10 +6,9 @@ CFLAGS=-g -c -std=c++11 -Wall -Wextra -Wpedantic -ggdb -Wno-unused-parameter -I$
 # Flaggorna till länkaren:
 LFLAGS=-lSDL2main -lSDL2 -lSDL2_image
 
-
 all: Starcrossed
 
-Starcrossed: main.o PlayState.o wall.o Sprite.o Shot.o Player.o AbstractGamestate.o GameScreen.o
+Starcrossed: main.o PlayState.o wall.o Sprite.o Shot.o Player.o AbstractGamestate.o GameScreen.o Animation.o Image.o
 	$(CC) *.o  $(LFLAGS) -o Starcrossed
 
 main.o: $(SRC_DIR)/main.cc
@@ -35,6 +34,12 @@ GameScreen.o: $(SRC_DIR)/GameScreen.cpp $(SRC_DIR)/GameScreen.h
 	
 Shot.o: $(SRC_DIR)/Shot.cpp $(SRC_DIR)/Shot.h
 	$(CC) $(CFLAGS) $(SRC_DIR)/Shot.cpp
+	
+Image.o: $(SRC_DIR)/Image.cpp $(SRC_DIR)/Image.h
+	$(CC) $(CFLAGS) $(SRC_DIR)/Image.cpp
+	
+Animation.o: $(SRC_DIR)/Animation.cpp $(SRC_DIR)/Animation.h
+	$(CC) $(CFLAGS) $(SRC_DIR)/Animation.cpp
 
 clean:
 	rm -rf *.o Starcrossed

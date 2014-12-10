@@ -16,11 +16,9 @@ public:
 			SDL_Renderer*& renderer, int health);
 	~Player();
 
+	void render_copy(SDL_Renderer*& renderer);
+
 	int get_health();
-	//returns bottom right x_value
-	int get_x();
-	//returns bottom right y value
-	int get_y();
 
 private:
 	int health;

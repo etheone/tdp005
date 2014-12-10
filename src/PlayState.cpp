@@ -9,24 +9,27 @@
 
 using namespace std;
 
-Play_State::Play_State(SDL_Renderer*& renderer) :
-		Abstract_Gamestate(renderer), running{true}, player{nullptr}
-{
-	const char* ship_img{"draft.png"};
+const char* COIN{"coin.png"};
+const char* SHOT_IMG{"player_shot4x4.png"};
+const char* ENEMY_SHOT{"enemy_shot.png"};
+const char* SHIP_IMG{"draft2.png"};
+const char* x_wall{"outer_x_wall.png"};
+const char* y_wall{"outer_y_wall.png"};
+const char* random_wall{"200_inner_wall.png"};
+const char* X_90_WALL{"100_inner_horizontal.png"};
 
-	player = new Player(0, 0, 0, ship_img,renderer, 1);
-	// TODO Auto-generated constructor stub
+Play_State::Play_State(SDL_Renderer*& renderer) :
+		Abstract_Gamestate(renderer), running{true}, space_down{false},
+		diff_x{0}, diff_y{0}, angle_wait{0}, pause{false}, player{nullptr}
+{
+	player = new Player(0, 0, 0, SHIP_IMG,renderer, 1);
 }
 
 Play_State::~Play_State()
 {
-	//for(std::pair<std::string, Sprite*> p : level_items)
-//	{
-//		delete p.second;
-//	}
 	delete player;
 	player = nullptr;
-	for(Wall*& s : level_items)
+	for(Sprite*& s : level_items)
 	{
 		delete s;
 		s = nullptr;
@@ -36,49 +39,56 @@ Play_State::~Play_State()
 		delete s;
 		s = nullptr;
 	}
-
-	for(Wall*& s : temp_shot_simulation)
+	for(Animation*& a : animations)
 		{
-			delete s;
-			s = nullptr;
+			delete a;
+			a = nullptr;
 		}
-
-
-	// TODO Auto-generated destructor stub
 }
 
 void Play_State::set_up_level()
 {
-	const char* x_wall{"outer_x_wall.png"};
-	const char* y_wall{"outer_y_wall.png"};
-	const char* random_wall{"200_inner_wall.png"};
-
 	level_items.push_back(new Wall(0, 0, 90, x_wall, renderer));
 	level_items.push_back(new Wall(0, SCREEN_HEIGHT-15, 90, x_wall, renderer));
 	level_items.push_back(new Wall(SCREEN_WIDTH-15, 0, 0, y_wall, renderer));
 	level_items.push_back(new Wall(0, 0, 0, y_wall, renderer));
 	level_items.push_back(new Wall(400,400, 0, random_wall, renderer));
-
-
+	level_items.push_back(new Wall(400,400, 90, X_90_WALL, renderer));
+	level_items.push_back(new Wall(500,400, 0, random_wall, renderer));
+	level_items.push_back(new Wall(400,588, 90, X_90_WALL, renderer));
+	level_items.push_back(new Wall(700,388, 90, X_90_WALL, renderer));
 }
 
 //void handle_keyboard_input(Player& player)
 
 void Play_State::draw_level()
 {
-	for(Wall*& wall : level_items)
+	player->render_copy(renderer);
+
+	for (Sprite*& sprite : level_items)
 	{
-		wall->render_copy(renderer);
+		sprite->render_copy(renderer);
 	}
 
-	for(Shot*& shot : shots)
+	for (Shot*& shot : shots)
 	{
 		shot->render_copy(renderer);
 	}
-
-	for(Wall*& w : temp_shot_simulation)
+	for (vector<Animation*>::iterator it{animations.begin()};
+			it != animations.end();
+			++it)
 	{
-		w->render_copy(renderer);
+		if ((*it)->is_alive())
+		{
+			(*it)->render_copy(renderer);
+			(*it)->update();
+		}
+		else
+		{
+			delete *it;
+			animations.erase(it);
+			break;
+		}
 	}
 }
 
@@ -91,66 +101,136 @@ double calculate_angle(double diff_x, double diff_y)
 void Play_State::update_shots()
 {
 	for(vector<Shot*>::iterator it{shots.begin()}; it !=shots.end(); ++it)
-	{if(shots.size()  != 0)
 	{
-		if((*it)->get_bounce_count() == 0)
-				{
-					delete *it;
-					shots.erase(it);
-					break;
-				}
+		if ((*it)->get_bounce_count() <= 0 || (*it)->outside_screen())
+		{
+			animations.push_back(new Animation(renderer,
+								(*it)->get_left_x(),
+								(*it)->get_top_y(),
+								9, 20, COIN));
+			delete *it;
+			shots.erase(it);
+			break;
+		}
 		else
 		{
 			(*it)->update_pos();
 		}
-	}}
+	}
+}
+
+void Play_State::player_collision_handler()
+{
+	for(Sprite*& s : level_items)
+	{
+		if(s->intersect(player))
+		{
+			cout << "you crashed" << endl;
+		}
+	}
+	for(Shot*& s : shots)
+	{
+		if(s->intersect(player) && s->get_harmless_time() > 20)
+		{
+			cout << "you ded" << endl;
+		//	pause = true;
+			//running = false;
+		}
+	}
+}
+
+double calculate_shot_angle(Shot*& shot, Sprite*& sprite)
+{
+	if(shot->check_left_short_side_collision(sprite) ||
+	   shot->check_right_short_side_collision(sprite))
+	{
+		cout << "now" << endl;
+		return (-shot->get_angle() + sprite->get_angle() * 2) + 180;
+	}
+
+	return (-shot->get_angle() + sprite->get_angle() * 2);
 }
 
 // Behövs till fienderna...
 void Play_State::simulate_shot_path(Shot*& shot)
 {
-
-	double temp_x{shot->get_exact_x()};
-	double temp_y{shot->get_exact_y()};
+	double temp_x{shot->get_left_x()};
+	double temp_y{shot->get_top_y()};
 	double temp_angle{shot->get_angle()};
 	int temp_bounce_count{shot->get_bounce_count()};
 
-	while(shot->get_bounce_count() > 0)
+	while (shot->get_bounce_count() >= 0)
 	{
-		for(Wall*& wall : level_items)
+		for (Sprite*& sprite : level_items)
 		{
-			if(shot->intersect(wall))
-			{
-				cout << "true" << endl;
-				shot->reduce_bounce_count();
-				shot->set_angle((-shot->get_angle() + wall->get_angle()*2));
-				shot->angle_to_queue(make_pair(shot->get_exact_x(), shot->get_exact_y()),shot->get_angle());
-				//temp_shot_simulation.push_back(new Wall(shot->get_exact_x(),
-//											   shot->get_exact_y(),
-//												0, test_wall, renderer));
+			if (shot->intersect(sprite))
+			{	shot->reduce_bounce_count();
+				shot->set_angle(calculate_shot_angle(shot, sprite));
+				shot->move_back();
+				shot->angle_to_queue(
+						make_pair(shot->get_left_x(), shot->get_top_y()),
+						shot->get_angle());
+				//level_items.push_back(new Wall(shot->get_left_x(),shot->get_top_y(), 90, ENEMY_SHOT, renderer));
 				break;
 			}
 		}
-		shot->update_pos2();
-
+		shot->update_pos_simulation();
 	}
 	shot->set_position(temp_x, temp_y);
 	shot->set_angle(temp_angle);
 	shot->set_bounce_count(temp_bounce_count);
 }
 
-bool Play_State::play_game()
+void Play_State::handle_inputs()
 {
-	int angle{0};
-	bool space_down{false};
+	SDL_Event event;
+	while (SDL_PollEvent(&event))
+	{
+		if (event.type == SDL_QUIT)
+		{
+			running = false;
+		}
+		else if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_SPACE))
+		{
+			space_down = true;
+		}
+		else if (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_SPACE))
+		{
+			space_down = false;
+		}
+		else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
+		{
+			pause = true;
+			running = false;
+		}
+		else if (event.type == SDL_MOUSEMOTION)
+		{
+			diff_x += (event.motion.x - player->get_middle_x());
+			diff_y += (event.motion.y - player->get_middle_y());
+			++angle_wait;
+			if(angle_wait >= 5 && !space_down)
+			{
+				player->set_angle(calculate_angle(diff_x, diff_y) + 90);
+				angle_wait = 0;
+				diff_x = 0;
+				diff_y = 0;
+			}
+			player->set_position(
+					event.motion.x - player->get_half_width(),
+					event.motion.y - player->get_half_height());
+		}
+		else if (event.type == SDL_MOUSEBUTTONDOWN)
+		{
+			shots.push_back(new Shot(player->get_middle_x(),
+					player->get_middle_y(),
+					player->get_angle(), SHOT_IMG, 5, 5, renderer));
+			simulate_shot_path(shots.back());
+		}
+	}
+}
 
-	int count{0};
-	double diff_x{0};
-	double diff_y{0};
-	set_up_level();
-
-	const char* shot_img{"player_shot.png"};
-
+void Play_State::run_game_loop()
+{
 	const Uint32 targetFrameDelay = 10;
 	Uint32 startTime = SDL_GetTicks();
 	Uint32 lastFrameTime = startTime;
@@ -160,64 +240,21 @@ bool Play_State::play_game()
 		// calculate deltaTime to use for updates
 		// done just before updates are done for maximum accuracy
 		Uint32 frameDelay = SDL_GetTicks() - lastFrameTime;
-//		float deltaTime = frameDelay / 1000.0f;
 		lastFrameTime += frameDelay;
 
-		SDL_Event event;
-		while (SDL_PollEvent(&event))
-		{
-			if (event.type == SDL_QUIT)
-			{
-				running = false;
-			}
-			else if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_SPACE))
-			{
-				space_down = true;
-			}
-			else if (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_SPACE))
-			{
-				space_down = false;
-			}
-			else if (event.type == SDL_MOUSEMOTION)
-			{
-				diff_x += (event.motion.x - player->get_x());
-				diff_y += (event.motion.y - player->get_y());
-				++count;
-				if(count > 5 && !space_down)
-				{
-					angle = calculate_angle(diff_x, diff_y) + 90;
-					count = 0;
-					diff_x = 0;
-					diff_y = 0;
-					player->set_angle(angle);
-				}
-				player->set_position(
-						event.motion.x - (player->get_half_width()),
-						event.motion.y - (player->get_half_height())
-										);
-			}
-			else if (event.type == SDL_MOUSEBUTTONDOWN)
-			{
-				shots.push_back(new Shot(player->get_infront_x(),
-										player->get_infront_y(),
-										player->get_angle(), shot_img, 5, 4, renderer));
-				simulate_shot_path(shots.back());
-
-			}
-		}
-
-
+		handle_inputs();
+		player_collision_handler();
 
 		if(!shots.empty())
 		{
-				update_shots();
+			update_shots();
 		}
 
 		//SDL_SetRelativeMouseMode(SDL_TRUE);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
+
 		draw_level();
-		player->render_copy(renderer);
 
 		//show the newly drawn things
 		SDL_RenderPresent(renderer);
@@ -229,6 +266,30 @@ bool Play_State::play_game()
 			// only wait if it's actually needed
 			Uint32 sleepTime = targetFrameDelay - frameDelay;
 			SDL_Delay(sleepTime);
+		}
+	}
+}
+
+bool Play_State::play_game()
+{
+	set_up_level();
+
+	run_game_loop();
+
+	// Handles Pause-button.
+	SDL_Event event;
+	while(pause)
+	{
+		SDL_PollEvent(&event);
+		if (event.type == SDL_QUIT)
+			{
+				pause = false;
+			}
+		else if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_p))
+		{
+			pause = false;
+			running = true;
+			run_game_loop();
 		}
 	}
 

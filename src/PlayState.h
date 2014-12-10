@@ -12,6 +12,7 @@
 #include "Player.h"
 #include "wall.h"
 #include "Shot.h"
+#include "Animation.h"
 
 class Play_State : public Abstract_Gamestate
 {
@@ -20,19 +21,33 @@ public:
 	~Play_State();
 
 	bool play_game();
+	void run_game_loop();
+
+	void handle_inputs();
+
 	void set_up_level();
 	void draw_level();
-	void simulate_shot_path(Shot*& shot);
 
+	void simulate_shot_path(Shot*& shot);
 	void update_shots();
+
+	void player_collision_handler();
 
 
 private:
 	bool running;
-	std::vector<Wall*> level_items;
+
+	//handle input stuff
+	bool space_down;
+	double diff_x;
+	double diff_y;
+	int angle_wait;
+	bool pause;
+
+	std::vector<Sprite*> level_items;
 	std::vector<Shot*> shots;
-	std::vector<Wall*> temp_shot_simulation;
-	Player* player;
+	std::vector<Animation*> animations;
+	Sprite* player;
 };
 
 #endif /* SRC_PLAYSTATE_H_ */

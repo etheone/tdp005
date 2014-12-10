@@ -8,55 +8,48 @@
 #ifndef SRC_SPRITE_H_
 #define SRC_SPRITE_H_
 
-#include <iostream>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <algorithm>
+#include "Image.h"
+
 #include <vector>
 #include <cmath>
 #include <map>
 
+const int SCREEN_WIDTH = 1200;
+const int SCREEN_HEIGHT = 800;
+
 const double PI = 3.14159265;
 
-class Sprite
+class Sprite : public Image
 {
 public:
 	virtual ~Sprite() = 0;
-	Sprite(int x, int y, double angle, const char*& img_file,
+	Sprite(double x, double y, double angle, const char*& img_file,
 			SDL_Renderer*& renderer);
 
-	int get_infront_x();
-	int get_infront_y();
-	double get_angle();
-	double get_exact_x() const;
-	double get_exact_y() const;
-	double get_exact_bottom_y() const;
-	double get_exact_right_x() const;
+	double get_angle() const;
 
-	double get_half_width();
-	double get_half_height();
+	double get_left_x() const;
+	double get_top_y() const;
+	double get_bottom_y() const;
+	double get_right_x() const;
 
+	double get_middle_x() const;
+	double get_middle_y() const;
 
-	void logSDLError(std::ostream &os, const std::string &msg);
-	void loadTexture(SDL_Renderer*& renderer);
+	double get_half_width() const;
+	double get_half_height() const;
+
+	virtual bool intersect(Sprite*&) const;
 	virtual void render_copy(SDL_Renderer*& renderer);
+
+
 	void set_angle(double new_angle);
-
-	bool intersect(Sprite*&) const;
-
 	void set_position(double x, double y);
 
 
 protected:
-	SDL_Texture* image;
-	SDL_Rect rectangle;
-
-	// Gives very accurate double coordinates for top_left.
-	double exact_x;
-	double exact_y;
-
 	double angle;
-	const char* img_file;
+	bool short_side;
 };
 
 #endif /* SRC_SPRITE_H_ */

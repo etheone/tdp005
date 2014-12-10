@@ -15,12 +15,10 @@ public:
 	~Wall();
 
 	void render_copy(SDL_Renderer*& renderer);
-
-	std::vector< std::pair<double, double> > get_box_container();
+	bool intersect(Sprite*&) const;
 
 private:
 std::vector< std::pair<double, double> > box_container;
-
 };
 
 #endif
