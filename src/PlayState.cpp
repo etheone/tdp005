@@ -9,21 +9,13 @@
 
 using namespace std;
 
-const char* COIN{"coin.png"};
-const char* SHOT_IMG{"player_shot4x4.png"};
-const char* ENEMY_SHOT{"enemy_shot.png"};
-const char* SHIP_IMG{"draft2.png"};
-const char* x_wall{"outer_x_wall.png"};
-const char* y_wall{"outer_y_wall.png"};
-const char* random_wall{"200_inner_wall.png"};
-const char* X_90_WALL{"100_inner_horizontal.png"};
-
 Play_State::Play_State(SDL_Renderer*& renderer) :
 		Abstract_Gamestate(renderer), running{true}, space_down{false},
 		diff_x{0}, diff_y{0}, angle_wait{0}, pause{false}, player{nullptr}
 {
-	player = new Player(0, 0, 0, SHIP_IMG,renderer, 1);
-	enemy = new Enemy(20,20,90, SHIP_IMG, renderer, 25);
+	level = new Level(renderer);
+	player = new Player(40, 400, 50, 50, 0, level->textures["player"], 1);
+	enemy = new Enemy(20, 20, 50, 50, 90, level->textures["player"], 25);
 }
 
 Play_State::~Play_State()
@@ -32,10 +24,12 @@ Play_State::~Play_State()
 	player = nullptr;
 	delete enemy;
 	enemy = nullptr;
-	for(Sprite*& s : level_items)
+	delete level;
+	level = nullptr;
+	for(Sprite*& l : level_items)
 	{
-		delete s;
-		s = nullptr;
+		delete l;
+		l = nullptr;
 	}
 	for(Shot*& s : shots)
 	{
@@ -51,18 +45,12 @@ Play_State::~Play_State()
 
 void Play_State::set_up_level()
 {
-	level_items.push_back(new Wall(0, 0, 90, x_wall, renderer));
-	level_items.push_back(new Wall(0, SCREEN_HEIGHT-15, 90, x_wall, renderer));
-	level_items.push_back(new Wall(SCREEN_WIDTH-15, 0, 0, y_wall, renderer));
-	level_items.push_back(new Wall(0, 0, 0, y_wall, renderer));
-	level_items.push_back(new Wall(400,400, 0, random_wall, renderer));
-	level_items.push_back(new Wall(400,400, 90, X_90_WALL, renderer));
-	level_items.push_back(new Wall(500,400, 0, random_wall, renderer));
-	level_items.push_back(new Wall(400,588, 90, X_90_WALL, renderer));
-	level_items.push_back(new Wall(700,388, 90, X_90_WALL, renderer));
+	level_items.push_back(new Wall(0, 0, 1200, 15, level->textures["outer_x"]));
+	level_items.push_back(new Wall(0, SCREEN_HEIGHT-15, 1200, 15, level->textures["outer_x"]));
+	level_items.push_back(new Wall(SCREEN_WIDTH-15, 0, 15, 800, level->textures["outer_y"]));
+	level_items.push_back(new Wall(0, 0, 15, 800, level->textures["outer_y"]));
+	level_items.push_back(new Wall(500, 500, 20, 20, level->textures["wall"]));
 }
-
-//void handle_keyboard_input(Player& player)
 
 void Play_State::draw_level()
 {
@@ -108,10 +96,11 @@ void Play_State::update_shots()
 	{
 		if ((*it)->get_bounce_count() < 0 || (*it)->outside_screen())
 		{
-			animations.push_back(new Animation(renderer,
+			/*animations.push_back(new Animation(level,
 								(*it)->get_left_x(),
 								(*it)->get_top_y(),
-								9, 20, COIN));
+
+								9, 20, COIN));*/
 			delete *it;
 			shots.erase(it);
 			break;
@@ -127,14 +116,10 @@ void Play_State::enemy_collision_handler()
 {
 	if(player->intersect(enemy))
 	{
-		animations.push_back(new Animation(renderer,
-								player->get_middle_x(),
-								player->get_middle_y(),
-								9, 20, COIN));
+
 		running = false;
 		pause = true;
 		player->set_visible(false);
-
 	}
 }
 
@@ -161,18 +146,6 @@ void Play_State::player_collision_handler()
 	p = nullptr;
 }
 
-double calculate_shot_angle(Shot*& shot, Sprite*& sprite)
-{
-	if(shot->check_left_short_side_collision(sprite) ||
-	   shot->check_right_short_side_collision(sprite))
-	{
-		cout << "now" << endl;
-		return (-shot->get_angle() + sprite->get_angle() * 2) + 180;
-	}
-
-	return (-shot->get_angle() + sprite->get_angle() * 2);
-}
-
 // Behövs till fienderna...
 void Play_State::simulate_shot_path(Shot*& shot)
 {
@@ -181,25 +154,21 @@ void Play_State::simulate_shot_path(Shot*& shot)
 	double temp_angle{shot->get_angle()};
 	int temp_bounce_count{shot->get_bounce_count()};
 
-	while (shot->get_bounce_count() >= 0)
+	while (shot->get_bounce_count() > 0)
 	{
 		for (Sprite*& sprite : level_items)
 		{
 			if (shot->intersect(sprite))
-			{	shot->reduce_bounce_count();
-				shot->set_angle(calculate_shot_angle(shot, sprite));
+			{
+				shot->move_back();
+				shot->reduce_bounce_count();
+				shot->set_angle(shot->calculate_angle_update(sprite));
 				shot->angle_to_queue(
 						make_pair(shot->get_left_x(), shot->get_top_y()),
 						shot->get_angle());
-				while(shot->intersect(sprite))
-				{
-					shot->update_pos_simulation();
-				}
 				shot->update_pos_simulation();
-
-				break;
-
-				//level_items.push_back(new Wall(shot->get_left_x(),shot->get_top_y(), 90, ENEMY_SHOT, renderer));
+				//level_items.push_back(new Wall(shot->get_left_x(),
+                //shot->get_top_y(), 90, ENEMY_SHOT, renderer));
 			}
 		}
 		shot->update_pos_simulation();
@@ -250,8 +219,9 @@ void Play_State::handle_inputs()
 		else if (event.type == SDL_MOUSEBUTTONDOWN)
 		{
 			shots.push_back(new Shot(player->get_middle_x(),
-					player->get_middle_y(),
-					player->get_angle(), SHOT_IMG, 2, 10, renderer));
+							player->get_middle_y(), 4, 4,
+							player->get_angle(), level->textures["shot"],
+							10, 3));
 			simulate_shot_path(shots.back());
 		}
 	}
@@ -265,8 +235,6 @@ void Play_State::run_game_loop()
 
 	while(running && player->get_health() > 0)
 	{
-		// calculate deltaTime to use for updates
-		// done just before updates are done for maximum accuracy
 		Uint32 frameDelay = SDL_GetTicks() - lastFrameTime;
 		lastFrameTime += frameDelay;
 

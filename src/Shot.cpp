@@ -2,28 +2,21 @@
 
 using namespace std;
 
-Shot::Shot(double x, double y, double angle,
-		const char*& img_file, int bounce_count,
-		int speed, SDL_Renderer*& renderer)
-	: Sprite(x, y, angle, img_file, renderer), bounce_count{bounce_count},
+Shot::Shot(double x, double y, int width, int height,
+		   double angle, SDL_Texture*& texture, int speed,
+		   int bounce_count)
+	: Sprite(x, y, width, height, angle, texture), bounce_count{bounce_count},
 	  speed{speed}, harmless_time{0}, previous_position{x, y}
 {
 }
 
 Shot::~Shot()
 {
-	if (image != nullptr)
-		{
-		SDL_DestroyTexture(image);
-		image = nullptr;
-		}
-	img_file = nullptr;
 }
 
 void Shot::update_pos()
 {
-	exact_x += speed * sin(angle*(PI/180));
-	exact_y += speed * -cos(angle*(PI/180));
+	update_position_inner();
 	++harmless_time;
 	for (const pair<pair<double, double>, double>& p :angles_queue)
 		{
@@ -33,8 +26,6 @@ void Shot::update_pos()
 				bounce_count -= 1;
 			}
 		}
-	rectangle.x = round(exact_x);
-	rectangle.y = round(exact_y);
 }
 
 void Shot::move_back()
@@ -46,14 +37,20 @@ void Shot::move_back()
 	rectangle.y = round(exact_y);
 }
 
-void Shot::update_pos_simulation()
+void Shot::update_position_inner()
 {
-	previous_position = {exact_x, exact_y};
 	exact_x += speed * sin(angle*(PI/180));
 	exact_y += speed * -cos(angle*(PI/180));
 
 	rectangle.x = round(exact_x);
 	rectangle.y = round(exact_y);
+}
+
+void Shot::update_pos_simulation()
+{
+	previous_position = {exact_x, exact_y};
+	update_position_inner();
+
 }
 
 int Shot::get_harmless_time() const
@@ -81,11 +78,6 @@ int Shot::get_speed() const
 	return speed;
 }
 
-pair<double, double> Shot::get_previous_position() const
-{
-	return previous_position;
-}
-
 void Shot::angle_to_queue(pair<double, double> p, double a)
 {
 	angles_queue[p] = a;
@@ -99,80 +91,30 @@ bool Shot::outside_screen() const
 	return check_x || check_y;
 }
 
-bool Shot::check_left_short_side_collision(Sprite*& s) const
+pair<double, double> Shot::find_collision_point(Sprite*& s)
 {
-	// Checks if there's a collision between a shot and a walls "left" short side.
-	// Only works for walls with angle 90 or 0 degrees.
-	bool check_y1;
-	bool check_x1;
-	bool check_y2;
-	bool check_x2;
-
-	if(s->get_angle() == 0)
+	double temp_x{exact_x};
+	double temp_y{exact_y};
+	exact_x = previous_position.first;
+	exact_y = previous_position.second;
+	while(!intersect(s))
 	{
-		check_x1 = previous_position.first + rectangle.w
-				> s->get_left_x() - 20;
-		check_x2 = previous_position.first
-				< s->get_right_x() + 20;
-		check_y1 = previous_position.second + rectangle.h
-				> s->get_top_y() - 30;
-		check_y2 = previous_position.second
-				< s->get_top_y();
-
-		return check_y1 && check_x1 && check_y2 && check_x2;
+		exact_x += sin(angle*(PI/180)) * 0.1;
+		exact_y += -cos(angle*(PI/180)) * 0.1;
 	}
-	else if (s->get_angle() == 90)
-	{
-		check_x1 = previous_position.first + rectangle.w
-				> s->get_left_x() - 30;
-		check_x2 = previous_position.first
-				< s->get_left_x();
-		check_y1 = previous_position.second + rectangle.h
-				> s->get_top_y() - 20;
-		check_y2 = previous_position.second
-				< s->get_bottom_y() + 20;
-
-				return check_y1 && check_x1 && check_y2 && check_x2;
-	}
-	return false;
+	pair<double, double> p{exact_x, exact_y};
+	exact_x = temp_x;
+	exact_y = temp_y;
+	return p;
 }
 
-bool Shot::check_right_short_side_collision(Sprite*& s) const
+double Shot::calculate_angle_update(Sprite*& wall)
 {
-	// Checks if there's a collision between a shot and a walls "right" short side.
-	// Only works for walls with angle 90 or 0 degrees.
-	bool check_y1;
-	bool check_x1;
-	bool check_y2;
-	bool check_x2;
-
-	if(s->get_angle() == 0)
+	pair<double, double> collision_point{find_collision_point(wall)};
+	if(round(collision_point.first + rectangle.w) == wall->get_left_x() ||
+		round(collision_point.first) == wall->get_right_x())
 	{
-		check_x1 = previous_position.first
-				< s->get_right_x() + 20;
-		check_x2 = previous_position.first + rectangle.w
-				> s->get_left_x() - 20;
-		check_y1 = previous_position.second
-				< s->get_bottom_y() + 30;
-		check_y2 = previous_position.second  + rectangle.h
-				> s->get_bottom_y();
-
-		return check_y1 && check_x1 && check_y2 && check_x2;
+		return -angle;
 	}
-	else if (s->get_angle() == 90)
-	{
-		check_x1 = previous_position.first
-				< s->get_right_x() + 30;
-		check_x2 = previous_position.first + rectangle.w
-				> s->get_right_x();
-		check_y1 = previous_position.second
-				< s->get_bottom_y() + 20;
-		check_y2 = previous_position.second + rectangle.h
-				> s->get_top_y() - 20;
-
-				return check_y1 && check_x1 && check_y2 && check_x2;
-	}
-	return false;
+	return -angle + 180;
 }
-
-

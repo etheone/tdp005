@@ -13,12 +13,13 @@
 class Animation : public Image
 {
 public:
-	Animation(SDL_Renderer*& renderer,
+	Animation(SDL_Texture*& texture,
 			const double& x,
 			const double& y,
+			const int& width,
+			const int& height,
 			const int& frames,
-			const int& updates,
-			const char*& img_file);
+			const int& updates);
 	virtual ~Animation();
 
 	void update();

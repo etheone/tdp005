@@ -9,8 +9,8 @@
 class Enemy : public Player
 {
 public:
-	Enemy(int x, int y, double angle, const char*& img_file,
-			SDL_Renderer*& renderer, int health);
+	Enemy(double x, double y, int width, int height,
+			double angle, SDL_Texture*& texture, int health);
 	~Enemy();
 
 

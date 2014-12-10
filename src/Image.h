@@ -15,7 +15,8 @@
 
 class Image {
 public:
-	Image(double x, double y, SDL_Renderer*& renderer, const char*& img_file);
+	Image(double x, double y, int width, int height,
+			SDL_Texture*& texture);
 	virtual ~Image()=0;
 
 	void load_texture(SDL_Renderer*& renderer);
@@ -28,7 +29,7 @@ public:
 
 
 protected:
-	SDL_Texture* image;
+	SDL_Texture*& image;
 	SDL_Rect rectangle;
 
 	// Gives very accurate "double coordinates"

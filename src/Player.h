@@ -12,8 +12,8 @@
 class Player : public Sprite
 {
 public:
-	Player(int x, int y, double angle, const char*& img_file,
-			SDL_Renderer*& renderer, int health);
+	Player(double x, double y, int width, int height,
+			double angle, SDL_Texture*& texture, int health);
 	~Player();
 
 	int get_health();

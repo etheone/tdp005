@@ -7,19 +7,14 @@
 
 #include "Player.h"
 
-Player::Player(int x, int y, double angle, const char*& img_file,
-		SDL_Renderer*& renderer, int health)
-: Sprite(x, y, angle, img_file, renderer), health{1}
+Player::Player(double x, double y, int width, int height,
+		double angle, SDL_Texture*& texture, int health)
+: Sprite(x, y, width, height, angle, texture), health{1}
 {
 }
 
 Player::~Player()
 {
-	if (image != nullptr)
-	{
-	SDL_DestroyTexture(image);
-	image = nullptr;
-	}
 }
 
 int Player::get_health()

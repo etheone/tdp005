@@ -13,6 +13,7 @@
 #include "Shot.h"
 #include "Animation.h"
 #include "Enemy.h"
+#include "Level.h"
 
 class Play_State : public Abstract_Gamestate
 {
@@ -51,6 +52,7 @@ private:
 	std::vector<Animation*> animations;
 	Player* player;
 	Sprite* enemy;
+	Level* level;
 };
 
 #endif /* SRC_PLAYSTATE_H_ */

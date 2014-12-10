@@ -2,9 +2,8 @@
 
 using namespace std;
 
-Wall::Wall(int x, int y, double angle, const char*& img_file,
-		SDL_Renderer*& renderer)
-		: Sprite(x, y, angle, img_file, renderer)
+Wall::Wall(double x, double y, int width, int height, SDL_Texture*& texture)
+		: Sprite(x, y, width, height, 0, texture)
 {
 
 	if(angle == 0 || angle == 90)
@@ -40,13 +39,6 @@ Wall::Wall(int x, int y, double angle, const char*& img_file,
 
 Wall::~Wall()
 {
-
-	if (image != nullptr)
-		{
-		SDL_DestroyTexture(image);
-		image = nullptr;
-		}
-	img_file = nullptr;
 }
 
 void Wall::render_copy(SDL_Renderer*& renderer)
@@ -54,32 +46,3 @@ void Wall::render_copy(SDL_Renderer*& renderer)
 	Image::render_copy(renderer);
 }
 
-bool Wall::intersect(Sprite*& s) const
-{
-	if(angle == 0 || angle == 90)
-	{
-		return Sprite::intersect(s);
-	}
-
-	else
-	{
-	bool check_y1;
-	bool check_x1;
-	bool check_y2;
-	bool check_x2;
-
-	for (const pair<double, double>& p : box_container)
-	{
-		check_y1 = s->get_top_y() <= p.second + rectangle.w;
-		check_x1 = s->get_left_x() <= p.first + rectangle.w;
-		check_y2 = s->get_bottom_y() >= p.second;
-		check_x2 = s->get_right_x() >= p.first;
-
-		if(check_y1 && check_x1 && check_y2 && check_x2)
-		{
-			return true;
-		}
-	}
-	return false;
-	}
-}

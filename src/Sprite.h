@@ -23,8 +23,8 @@ class Sprite : public Image
 {
 public:
 	virtual ~Sprite() = 0;
-	Sprite(double x, double y, double angle, const char*& img_file,
-			SDL_Renderer*& renderer);
+	Sprite(double x, double y, int width, int height,
+			double angle, SDL_Texture*& texture);
 
 	double get_angle() const;
 

@@ -13,9 +13,9 @@ Sprite::~Sprite()
 {
 }
 
-Sprite::Sprite(double x, double y, double angle, const char*& img_file,
-			SDL_Renderer*& renderer)
-: Image{x, y, renderer, img_file}, angle{angle}, short_side{false}
+Sprite::Sprite(double x, double y, int width, int height,
+				double angle, SDL_Texture*& texture)
+: Image{x, y, width, height, texture}, angle{angle}, short_side{false}
 {
 }
 
