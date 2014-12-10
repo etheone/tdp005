@@ -21,10 +21,6 @@ Player::~Player()
 	image = nullptr;
 	}
 }
-void Player::render_copy(SDL_Renderer*& renderer)
-{
-	Sprite::render_copy(renderer);
-}
 
 int Player::get_health()
 {

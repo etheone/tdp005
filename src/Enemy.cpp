@@ -4,8 +4,8 @@
 
 #include "Enemy.h"
 
-Enemy::Enemy(int x, int y, double angle, const char*& img_file, int health)
-: Sprite(x, y, angle, img_file), health{0}
+Enemy::Enemy(int x, int y, double angle, const char*& img_file, SDL_Renderer*& renderer, int health)
+: Player(x, y, angle, img_file, renderer, health)
 {
 	// TODO Auto-generated constructor stub
 }
@@ -17,29 +17,4 @@ Enemy::~Enemy()
 	SDL_DestroyTexture(image);
 	image = nullptr;
 	}
-}
-
-int Enemy::get_height()
-{
-	return rectangle.h;
-}
-
-int Enemy::get_width()
-{
-	return rectangle.w;
-}
-
-int Enemy::get_x()
-{
-	return rectangle.x;
-}
-
-int Enemy::get_y()
-{
-	return rectangle.y;
-}
-
-int Enemy::get_health()
-{
-	return health;
 }

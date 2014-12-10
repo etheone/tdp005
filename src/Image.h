@@ -23,6 +23,9 @@ public:
 
 	void logSDLError(std::ostream &os, const std::string &msg);
 
+	void set_visible(bool v);
+	bool get_visible();
+
 
 protected:
 	SDL_Texture* image;
@@ -32,6 +35,8 @@ protected:
 	//for top-left corner.
 	double exact_x;
 	double exact_y;
+
+	bool visible;
 
 	const char* img_file;
 };

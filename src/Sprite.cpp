@@ -78,8 +78,11 @@ void Sprite::set_position(double x, double y)
 
 void Sprite::render_copy(SDL_Renderer*& renderer)
 {
+	if(visible)
+	{
 	SDL_RenderCopyEx(renderer, image, nullptr, &rectangle,
 			angle, nullptr ,SDL_FLIP_HORIZONTAL);
+	}
 }
 
 bool Sprite::intersect(Sprite*& s) const

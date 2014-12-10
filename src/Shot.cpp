@@ -31,7 +31,6 @@ void Shot::update_pos()
 			{
 				angle = p.second;
 				bounce_count -= 1;
-				break;
 			}
 		}
 	rectangle.x = round(exact_x);
@@ -94,8 +93,8 @@ void Shot::angle_to_queue(pair<double, double> p, double a)
 
 bool Shot::outside_screen() const
 {
-	bool check_y{exact_y < 0 || exact_y > SCREEN_HEIGHT-15};
-	bool check_x{exact_x < 0 || exact_x > SCREEN_WIDTH-15};
+	bool check_y{exact_y < -5 || exact_y > SCREEN_HEIGHT+15};
+	bool check_x{exact_x < -5 || exact_x > SCREEN_WIDTH+15};
 
 	return check_x || check_y;
 }

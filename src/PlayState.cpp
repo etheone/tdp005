@@ -23,12 +23,15 @@ Play_State::Play_State(SDL_Renderer*& renderer) :
 		diff_x{0}, diff_y{0}, angle_wait{0}, pause{false}, player{nullptr}
 {
 	player = new Player(0, 0, 0, SHIP_IMG,renderer, 1);
+	enemy = new Enemy(20,20,90, SHIP_IMG, renderer, 25);
 }
 
 Play_State::~Play_State()
 {
 	delete player;
 	player = nullptr;
+	delete enemy;
+	enemy = nullptr;
 	for(Sprite*& s : level_items)
 	{
 		delete s;
@@ -64,6 +67,7 @@ void Play_State::set_up_level()
 void Play_State::draw_level()
 {
 	player->render_copy(renderer);
+	enemy->render_copy(renderer);
 
 	for (Sprite*& sprite : level_items)
 	{
@@ -102,7 +106,7 @@ void Play_State::update_shots()
 {
 	for(vector<Shot*>::iterator it{shots.begin()}; it !=shots.end(); ++it)
 	{
-		if ((*it)->get_bounce_count() <= 0 || (*it)->outside_screen())
+		if ((*it)->get_bounce_count() < 0 || (*it)->outside_screen())
 		{
 			animations.push_back(new Animation(renderer,
 								(*it)->get_left_x(),
@@ -119,24 +123,42 @@ void Play_State::update_shots()
 	}
 }
 
+void Play_State::enemy_collision_handler()
+{
+	if(player->intersect(enemy))
+	{
+		animations.push_back(new Animation(renderer,
+								player->get_middle_x(),
+								player->get_middle_y(),
+								9, 20, COIN));
+		running = false;
+		pause = true;
+		player->set_visible(false);
+
+	}
+}
+
 void Play_State::player_collision_handler()
 {
+	Sprite* p = dynamic_cast<Sprite*>(player);
+
 	for(Sprite*& s : level_items)
 	{
-		if(s->intersect(player))
+		if(s->intersect(p))
 		{
 			cout << "you crashed" << endl;
 		}
 	}
 	for(Shot*& s : shots)
 	{
-		if(s->intersect(player) && s->get_harmless_time() > 20)
+		if(s->intersect(p) && s->get_harmless_time() > 20)
 		{
 			cout << "you ded" << endl;
 		//	pause = true;
 			//running = false;
 		}
 	}
+	p = nullptr;
 }
 
 double calculate_shot_angle(Shot*& shot, Sprite*& sprite)
@@ -166,12 +188,18 @@ void Play_State::simulate_shot_path(Shot*& shot)
 			if (shot->intersect(sprite))
 			{	shot->reduce_bounce_count();
 				shot->set_angle(calculate_shot_angle(shot, sprite));
-				shot->move_back();
 				shot->angle_to_queue(
 						make_pair(shot->get_left_x(), shot->get_top_y()),
 						shot->get_angle());
-				//level_items.push_back(new Wall(shot->get_left_x(),shot->get_top_y(), 90, ENEMY_SHOT, renderer));
+				while(shot->intersect(sprite))
+				{
+					shot->update_pos_simulation();
+				}
+				shot->update_pos_simulation();
+
 				break;
+
+				//level_items.push_back(new Wall(shot->get_left_x(),shot->get_top_y(), 90, ENEMY_SHOT, renderer));
 			}
 		}
 		shot->update_pos_simulation();
@@ -223,7 +251,7 @@ void Play_State::handle_inputs()
 		{
 			shots.push_back(new Shot(player->get_middle_x(),
 					player->get_middle_y(),
-					player->get_angle(), SHOT_IMG, 5, 5, renderer));
+					player->get_angle(), SHOT_IMG, 2, 10, renderer));
 			simulate_shot_path(shots.back());
 		}
 	}
@@ -235,7 +263,7 @@ void Play_State::run_game_loop()
 	Uint32 startTime = SDL_GetTicks();
 	Uint32 lastFrameTime = startTime;
 
-	while(running)
+	while(running && player->get_health() > 0)
 	{
 		// calculate deltaTime to use for updates
 		// done just before updates are done for maximum accuracy
@@ -243,6 +271,7 @@ void Play_State::run_game_loop()
 		lastFrameTime += frameDelay;
 
 		handle_inputs();
+		enemy_collision_handler();
 		player_collision_handler();
 
 		if(!shots.empty())

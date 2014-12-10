@@ -9,10 +9,10 @@
 #define SRC_PLAYSTATE_H_
 
 #include "AbstractGamestate.h"
-#include "Player.h"
 #include "wall.h"
 #include "Shot.h"
 #include "Animation.h"
+#include "Enemy.h"
 
 class Play_State : public Abstract_Gamestate
 {
@@ -35,6 +35,8 @@ public:
 
 
 private:
+	void enemy_collision_handler();
+
 	bool running;
 
 	//handle input stuff
@@ -47,7 +49,8 @@ private:
 	std::vector<Sprite*> level_items;
 	std::vector<Shot*> shots;
 	std::vector<Animation*> animations;
-	Sprite* player;
+	Player* player;
+	Sprite* enemy;
 };
 
 #endif /* SRC_PLAYSTATE_H_ */

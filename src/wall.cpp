@@ -51,7 +51,7 @@ Wall::~Wall()
 
 void Wall::render_copy(SDL_Renderer*& renderer)
 {
-	SDL_RenderCopy(renderer, image, nullptr, &rectangle);
+	Image::render_copy(renderer);
 }
 
 bool Wall::intersect(Sprite*& s) const

@@ -16,8 +16,6 @@ public:
 			SDL_Renderer*& renderer, int health);
 	~Player();
 
-	void render_copy(SDL_Renderer*& renderer);
-
 	int get_health();
 
 private:

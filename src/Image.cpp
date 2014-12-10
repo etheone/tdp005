@@ -9,8 +9,7 @@
 
 Image::Image(double x, double y, SDL_Renderer*& renderer, const char*& img_file)
 : image{nullptr}, rectangle({int(round(x)), int(round(y)), 0, 0}),
-  exact_x{x}, exact_y{y},
-  img_file{img_file}
+  exact_x{x}, exact_y{y}, visible{true}, img_file{img_file}
 {
 	load_texture(renderer);
 }
@@ -43,10 +42,23 @@ void Image::load_texture(SDL_Renderer*& renderer)
 
 void Image::render_copy(SDL_Renderer*& renderer)
 {
+	if(visible)
+	{
 	SDL_RenderCopy(renderer, image, nullptr, &rectangle);
+	}
 }
 
 void Image::logSDLError(std::ostream &os, const std::string &msg)
 {
 	os << msg << " error: " << SDL_GetError() << std::endl;
+}
+
+void Image::set_visible(bool v)
+{
+	visible = v;
+}
+
+bool Image::get_visible()
+{
+	return visible;
 }
