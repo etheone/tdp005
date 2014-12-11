@@ -18,7 +18,6 @@ public:
 	void render_copy(SDL_Renderer*& renderer);
 
 private:
-std::vector< std::pair<double, double> > box_container;
 };
 
 #endif

@@ -8,13 +8,13 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 	// Creates a window and destroys the window when main is done.
-	Game_Screen G(SCREEN_WIDTH, SCREEN_HEIGHT);
+	Game_Screen g(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// CLASS INIT
-	Play_State Play(G.get_renderer());
+	Play_State play(g.get_renderer());
 
 	// MAIN LOOP
-	Play.play_game();
+	play.run();
 
 	return 0;
 }
