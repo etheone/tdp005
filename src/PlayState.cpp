@@ -76,7 +76,7 @@ void Play_State::handle_inputs()
 								level->player->get_middle_y(),
 								4, 4,
 								level->player->get_angle(),
-								10, 3);
+								5, 3, true);
 			level->simulate_shot_path();
 		}
 	}

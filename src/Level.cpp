@@ -45,9 +45,6 @@ Level::Level(SDL_Renderer*& renderer)
 	SDL_FreeSurface(temp);
 
 
-
-
-
 	player = new Player(40, 400, 40, 40, 0,textures["player"], 1);
 
 	level_items.push_back(new Wall(0, 0, 1200, 15, textures["outer_x"]));
@@ -121,12 +118,10 @@ void Level::load_level(string filenumber)
 			{
 				enemies.push_back(new Enemy(i*20, line_number*20, 60, 60, 270, textures["enemy"], 25));
 			}
-
 		}
-		cout << endl;
-
 	}
 	file.close();
+
 }
 
 void Level::draw_level()
@@ -172,13 +167,17 @@ void Level::update_enemy()
 {
 	for(Enemy* enemy : enemies)
 	{
+//		if(enemy->get_health() <= 0)
+//		{
+//			delete enemy;
+//		}
 		if(enemy->get_counter() == 40)
 		{
 			add_to_shots(enemy->get_middle_x(),
 						 enemy->get_middle_y(),
 						 4, 4,
 						 enemy->get_angle(),
-						 10, 3);
+						 5, 3, false);
 			simulate_shot_path();
 		}
 		enemy->update();
@@ -202,15 +201,38 @@ void Level::update_shots()
 		}
 		else
 		{
+			Sprite* temp;
+			for(Enemy* enemy : enemies)
+			{
+				temp = dynamic_cast<Sprite*>(enemy);
+				if((*it)->is_player_shot() && (*it)->intersect(temp))
+				{
+					animations.push_back(new Animation(textures["shot_animation"],
+													(*it)->get_left_x(),
+													(*it)->get_top_y(),
+													256, 32,
+													8, 3));
+					enemy->decrease_health();
+					cout << enemy->get_health() << endl;
+					delete *it;
+					shots.erase(it);
+					return;
+				}
+			}
+			temp = nullptr;
+
 			(*it)->update_pos();
 		}
 	}
 }
 
 void Level::add_to_shots(double x, double y, int w, int h,
-				  double angle, int speed, int b)
+				         double angle, int speed, int b,
+						 bool player_shot)
 {
-	shots.push_back(new Shot(x, y, w, h, angle, textures["shot"], speed, b));
+	shots.push_back(new Shot(x, y, w, h, angle,
+							 textures["shot"],
+							 speed, b, player_shot));
 }
 
 void Level::enemy_collision_handler()
@@ -243,15 +265,15 @@ void Level::player_collision_handler()
 		if(s->intersect(p))
 		{
 			cout << "you crashed" << endl;
+			player->decrease_health();
 		}
 	}
 	for(Shot*& s : shots)
 	{
-		if(s->intersect(p) && s->get_harmless_time() > 20)
+		if(s->intersect(p) && s->get_harmless_time() > 10)
 		{
 			cout << "you ded" << endl;
-		//	pause = true;
-			//running = false;
+			player->decrease_health();
 		}
 	}
 	p = nullptr;

@@ -4,9 +4,9 @@ using namespace std;
 
 Shot::Shot(double x, double y, int width, int height,
 		   double angle, SDL_Texture*& texture, int speed,
-		   int bounce_count)
+		   int bounce_count, bool player_shot)
 	: Sprite(x, y, width, height, angle, texture), bounce_count{bounce_count},
-	  speed{speed}, harmless_time{0}, previous_position{x, y}
+	  speed{speed}, harmless_time{0}, player_shot{player_shot}, previous_position{x, y}
 {
 }
 
@@ -51,6 +51,10 @@ void Shot::update_pos_simulation()
 	previous_position = {exact_x, exact_y};
 	update_position_inner();
 
+}
+bool Shot::is_player_shot()
+{
+	return player_shot;
 }
 
 int Shot::get_harmless_time() const

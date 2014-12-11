@@ -8,7 +8,7 @@ using namespace std;
 
 Enemy::Enemy(double x, double y, int width, int height,
 		double angle, SDL_Texture*& texture, int health)
-: Player(x, y, width, height, angle, texture, health), speed{1}, update_counter{0}
+: Player(x, y, width, height, angle, texture, health), speed{0.1}, update_counter{0}
 {
 }
 

@@ -22,7 +22,7 @@ public:
 
 
 private:
-	int speed;
+	double speed;
 	int update_counter;
 };
 

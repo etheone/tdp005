@@ -35,7 +35,8 @@ public:
 	void player_collision_handler();
 
 	void add_to_shots(double x, double y, int w, int h,
-					  double angle, int speed, int b);
+					  double angle, int speed, int b,
+					  bool player_shot);
 	void enemy_collision_handler();
 
 	bool shots_empty();

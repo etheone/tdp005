@@ -17,6 +17,7 @@ public:
 	~Player();
 
 	int get_health();
+	void decrease_health();
 
 private:
 	int health;
