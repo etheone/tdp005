@@ -99,8 +99,8 @@ pair<double, double> Shot::find_collision_point(Sprite*& s)
 	exact_y = previous_position.second;
 	while(!intersect(s))
 	{
-		exact_x += sin(angle*(PI/180)) * 0.1;
-		exact_y += -cos(angle*(PI/180)) * 0.1;
+		exact_x += sin(angle*(PI/180)) * 0.5;
+		exact_y += -cos(angle*(PI/180)) * 0.5;
 	}
 	pair<double, double> p{exact_x, exact_y};
 	exact_x = temp_x;

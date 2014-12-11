@@ -18,6 +18,8 @@ public:
 	Abstract_Gamestate(SDL_Renderer*& renderer);
 	virtual ~Abstract_Gamestate()=0;
 
+	virtual void run() = 0;
+
 protected:
 	SDL_Renderer* renderer;
 };
