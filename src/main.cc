@@ -1,6 +1,7 @@
 #include <iostream>
 #include "PlayState.h"
 #include "GameScreen.h"
+#include "Menu.h"
 
 
 using namespace std;
@@ -11,10 +12,16 @@ int main(int argc, char* argv[])
 	Game_Screen g(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// CLASS INIT
-	Play_State play(g.get_renderer());
+	Menu menu(g.get_renderer());
+	Play_State game(g.get_renderer());
 
 	// MAIN LOOP
-	play.run();
+	string state = menu.run();
+	if(state == "play")
+	{
+		game.run();
+	}
+
 
 	return 0;
 }

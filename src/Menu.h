@@ -18,14 +18,16 @@ public:
 	Menu(SDL_Renderer*& renderer);
 	~Menu();
 
+	std::string run();
+
 
 private:
-	void Menu::draw_menu();
-	void run();
+	void handle_inputs();
+	void draw_menu();
 
 	bool running;
 
-	std::map<std::string, SDL_Texture*&> textures;
+	std::map<std::string, SDL_Texture*> textures;
 	std::map<std::string, Button*> buttons;
 };
 

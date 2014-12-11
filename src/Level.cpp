@@ -12,35 +12,35 @@ using namespace std;
 Level::Level(SDL_Renderer*& renderer)
 :current_level{"1"}, renderer{renderer}, back({0, 0, 1200, 800})
 {
-	SDL_Surface* temp = IMG_Load("20x20_wall.png");
+	SDL_Surface* temp = IMG_Load("textures/20x20_wall.png");
 	textures["wall"] = SDL_CreateTextureFromSurface(renderer,temp);
 	SDL_FreeSurface(temp);
 
-	temp = IMG_Load("outer_x_wall.png");
+	temp = IMG_Load("textures/outer_x_wall.png");
 	textures["outer_x"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
-	temp = IMG_Load("outer_y_wall.png");
+	temp = IMG_Load("textures/outer_y_wall.png");
 	textures["outer_y"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
-	temp = IMG_Load("playership.png");
+	temp = IMG_Load("textures/playership.png");
 	textures["player"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
-	temp = IMG_Load("player_shot4x4.png");
+	temp = IMG_Load("textures/player_shot4x4.png");
 	textures["shot"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
-	temp = IMG_Load("shotspritesheet.png");
+	temp = IMG_Load("textures/shotspritesheet.png");
 	textures["shot_animation"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
-	temp = IMG_Load("enemyship1.png");
+	temp = IMG_Load("textures/enemyship1.png");
 	textures["enemy"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
-	temp = IMG_Load("space1.png");
+	temp = IMG_Load("textures/space1.png");
 	textures["background"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
@@ -257,7 +257,7 @@ void Level::player_collision_handler()
 	p = nullptr;
 }
 
-// Behövs till fienderna...
+
 void Level::simulate_shot_path()
 {
 	Shot*& shot{shots.back()};
@@ -286,6 +286,4 @@ void Level::simulate_shot_path()
 	shot->set_angle(temp_angle);
 	shot->set_bounce_count(temp_bounce_count);
 }
-
-//	level_items.push_back(new Wall(500, 500, 20, 20, level->textures["wall"]));
 

@@ -10,12 +10,10 @@
 using namespace std;
 
 Play_State::Play_State(SDL_Renderer*& renderer) :
-		Abstract_Gamestate(renderer), running{true}, space_down{false},
+		Abstract_Gamestate(renderer, "play_state"), running{true},
+		level{nullptr}, space_down{false},
 		diff_x{0}, diff_y{0}, angle_wait{0}, pause{false}
 {
-	level = new Level(renderer);
-	delete level;
-	level = new Level(renderer);
 }
 
 Play_State::~Play_State()
@@ -124,8 +122,9 @@ void Play_State::run_game_loop()
 	}
 }
 
-void Play_State::run()
+string Play_State::run()
 {
+	level = new Level(renderer);
 	level->load_level("1");
 
 	run_game_loop();
@@ -146,4 +145,5 @@ void Play_State::run()
 			run_game_loop();
 		}
 	}
+	return "inactive";
 }

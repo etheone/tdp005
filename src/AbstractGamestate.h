@@ -15,13 +15,20 @@
 class Abstract_Gamestate
 {
 public:
-	Abstract_Gamestate(SDL_Renderer*& renderer);
+	Abstract_Gamestate(SDL_Renderer*& renderer,
+			std::string gamestate);
 	virtual ~Abstract_Gamestate()=0;
 
-	virtual void run() = 0;
+	std::string get_state() const;
+	void set_gamestate(std::string str);
+
+
+
+	virtual std::string run() = 0;
 
 protected:
 	SDL_Renderer* renderer;
+	std::string gamestate;
 };
 
 #endif /* SRC_ABSTRACTGAMESTATE_H_ */

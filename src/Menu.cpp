@@ -9,15 +9,14 @@
 
 using namespace std;
 
-Menu::Menu(SDL_Renderer*& renderer) : Abstract_Gamestate(renderer), running{true}
+Menu::Menu(SDL_Renderer*& renderer)
+: Abstract_Gamestate(renderer, "none"), running{true}
 {
-	SDL_Surface* temp = IMG_Load("20x20_wall.png");
-	textures["button1"] = SDL_CreateTextureFromSurface(renderer,temp);
+	SDL_Surface* temp = IMG_Load("textures/start_game_button.png");
+	textures["button1"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
-	buttons["Play_Game"] = new Button(200, 200, 400, 400, textures["button1"]);
-
-	run();
+	buttons["start_game"] = new Button(250, 100, 600, 100, textures["button1"]);
 }
 
 Menu::~Menu()
@@ -27,10 +26,10 @@ Menu::~Menu()
 				i != buttons.end(); ++i)
 		{
 			delete i->second;
-			i == nullptr;
+			i->second = nullptr;
 		}
 
-	for(map<string, SDL_Texture*&>::iterator i = textures.begin();
+	for(map<string, SDL_Texture*>::iterator i = textures.begin();
 				i != textures.end(); ++i)
 	{
 		SDL_DestroyTexture(i->second);
@@ -39,15 +38,35 @@ Menu::~Menu()
 
 void Menu::draw_menu()
 {
-//	for(Button*& b : buttons)
-//	{
-//		b->render_copy(renderer);
-//	}
+	for(map<string, Button*>::iterator i = buttons.begin();
+					i != buttons.end(); ++i)
+	{
+		i->second->render_copy(renderer);
+	}
+}
+
+void Menu::handle_inputs()
+{
+	SDL_Event event;
+	while (SDL_PollEvent(&event))
+	{
+		if (event.type == SDL_QUIT)
+		{
+			running = false;
+		}
+		else if ( event.type == SDL_MOUSEBUTTONDOWN &&
+				 buttons["start_game"]->in_button_area(event.motion.x, event.motion.y))
+		{
+			running = false;
+			gamestate = "play";
+		}
+	}
 }
 
 
-void Menu::run()
+string Menu::run()
 {
+	gamestate = "none";
 	const Uint32 targetFrameDelay = 10;
 	Uint32 startTime = SDL_GetTicks();
 	Uint32 lastFrameTime = startTime;
@@ -62,6 +81,7 @@ void Menu::run()
 		SDL_RenderClear(renderer);
 
 		draw_menu();
+		handle_inputs();
 
 		//show the newly drawn things
 		SDL_RenderPresent(renderer);
@@ -75,5 +95,6 @@ void Menu::run()
 			SDL_Delay(sleepTime);
 		}
 	}
+	return gamestate;
 }
 

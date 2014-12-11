@@ -17,7 +17,7 @@ public:
 	Play_State(SDL_Renderer*& renderer);
 	~Play_State();
 
-	void run();
+	std::string run();
 	void run_game_loop();
 
 	void handle_inputs();
