@@ -14,6 +14,8 @@ Play_State::Play_State(SDL_Renderer*& renderer) :
 		diff_x{0}, diff_y{0}, angle_wait{0}, pause{false}
 {
 	level = new Level(renderer);
+	delete level;
+	level = new Level(renderer);
 }
 
 Play_State::~Play_State()
@@ -67,6 +69,8 @@ void Play_State::handle_inputs()
 			level->player->set_position(
 					event.motion.x - level->player->get_half_width(),
 					event.motion.y - level->player->get_half_height());
+
+			level->player_collision_handler();
 		}
 		else if (event.type == SDL_MOUSEBUTTONDOWN)
 		{
@@ -92,8 +96,8 @@ void Play_State::run_game_loop()
 		lastFrameTime += frameDelay;
 
 		handle_inputs();
+		level->update_enemy();
 		level->enemy_collision_handler();
-		level->player_collision_handler();
 
 		if(!level->shots_empty())
 		{
@@ -101,7 +105,7 @@ void Play_State::run_game_loop()
 		}
 
 		//SDL_SetRelativeMouseMode(SDL_TRUE);
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		//SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 
 		level->draw_level();

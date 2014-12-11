@@ -42,7 +42,6 @@ public:
 	virtual bool intersect(Sprite*&) const;
 	virtual void render_copy(SDL_Renderer*& renderer);
 
-
 	void set_angle(double new_angle);
 	void set_position(double x, double y);
 

@@ -10,7 +10,7 @@
 using namespace std;
 
 Level::Level(SDL_Renderer*& renderer)
-:current_level{"1"}, renderer{renderer}
+:current_level{"1"}, renderer{renderer}, back({0, 0, 1200, 800})
 {
 	SDL_Surface* temp = IMG_Load("20x20_wall.png");
 	textures["wall"] = SDL_CreateTextureFromSurface(renderer,temp);
@@ -32,13 +32,23 @@ Level::Level(SDL_Renderer*& renderer)
 	textures["shot"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
-	temp = IMG_Load("coin.png");
-	textures["coin"] = SDL_CreateTextureFromSurface(renderer, temp);
+	temp = IMG_Load("shotspritesheet.png");
+	textures["shot_animation"] = SDL_CreateTextureFromSurface(renderer, temp);
+	SDL_FreeSurface(temp);
+
+	temp = IMG_Load("enemyship1.png");
+	textures["enemy"] = SDL_CreateTextureFromSurface(renderer, temp);
+	SDL_FreeSurface(temp);
+
+	temp = IMG_Load("space1.png");
+	textures["background"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
 
+
+
+
 	player = new Player(40, 400, 40, 40, 0,textures["player"], 1);
-	enemies.push_back(new Enemy(20, 20, 40, 40, 90, textures["player"], 25));
 
 	level_items.push_back(new Wall(0, 0, 1200, 15, textures["outer_x"]));
 	level_items.push_back(new Wall(0, SCREEN_HEIGHT-15, 1200, 15, textures["outer_x"]));
@@ -51,7 +61,7 @@ Level::~Level()
 	delete player;
 	player = nullptr;
 
-	for(Sprite*& e : enemies)
+	for(Enemy*& e : enemies)
 		{
 			delete e;
 			e = nullptr;
@@ -85,8 +95,7 @@ Level::~Level()
 
 void Level::load_level(string filenumber)
 {
-//Loads a level from a file line by line and adds it to the
-//different vectors that contains the objects in the world
+//Loads a level from a file.
 	std::map<std::string, char> objects{{"wall", '#'}, {"player", 'p'}, {"enemy", 'e'}};
 
 	string level_str = "levels/level" + current_level + ".txt";
@@ -100,29 +109,18 @@ void Level::load_level(string filenumber)
 		{
 			if (line[i] == objects["wall"])
 			{
-				cout << line[i];
-
 				level_items.push_back(new Wall(i*20, line_number*20, 20, 20, textures["wall"]));
 			}
 
 //			if (line[i] == objects["player"])
 //			{
-//				player = new Player(20 ,50 , i*80, current_line*80, *textures["player"]);
+//				player = new Player(i*20 ,line_number*20 ,40, 40 , *textures["player"]);
 //			}
 
 			if (line[i] == objects["enemy"])
 			{
-				enemies.push_back(new Enemy(i*20, line_number*20, 40, 40, 180, textures["player"], 25));
+				enemies.push_back(new Enemy(i*20, line_number*20, 60, 60, 270, textures["enemy"], 25));
 			}
-			/*if (line[i] == objects["lava"])
-			{
-				enemies.push_back(new Lava(80,80,(i*80),(current_line*80), *textures["lava"]));
-			}
-			if (line[i] == objects["button"])
-			{
-				button = new Button(20 ,80 , i*80 + 60, current_line*80, *textures["button"]);
-				//enemies.push_back(new Lava(80,80,(i*80),(current_line*80), *textures["lava"]));
-			}*/
 
 		}
 		cout << endl;
@@ -133,9 +131,12 @@ void Level::load_level(string filenumber)
 
 void Level::draw_level()
 {
+
+	SDL_RenderCopy(renderer, textures["background"], nullptr, &back);
+
 	player->render_copy(renderer);
 
-	for (Sprite*& enemy : enemies)
+	for (Enemy*& enemy : enemies)
 	{
 		enemy->render_copy(renderer);
 	}
@@ -167,17 +168,34 @@ void Level::draw_level()
 	}
 }
 
+void Level::update_enemy()
+{
+	for(Enemy* enemy : enemies)
+	{
+		if(enemy->get_counter() == 40)
+		{
+			add_to_shots(enemy->get_middle_x(),
+						 enemy->get_middle_y(),
+						 4, 4,
+						 enemy->get_angle(),
+						 10, 3);
+			simulate_shot_path();
+		}
+		enemy->update();
+	}
+}
+
 void Level::update_shots()
 {
 	for(vector<Shot*>::iterator it{shots.begin()}; it !=shots.end(); ++it)
 	{
 		if ((*it)->get_bounce_count() < 0 || (*it)->outside_screen())
 		{
-			animations.push_back(new Animation(textures["coin"],
+			animations.push_back(new Animation(textures["shot_animation"],
 								(*it)->get_left_x(),
 								(*it)->get_top_y(),
-								270, 30,
-								9, 20));
+								256, 32,
+								8, 3));
 			delete *it;
 			shots.erase(it);
 			break;
@@ -197,13 +215,17 @@ void Level::add_to_shots(double x, double y, int w, int h,
 
 void Level::enemy_collision_handler()
 {
-	for(Sprite*& enemy : enemies)
+	Sprite* e{nullptr};
+
+	for(Enemy*& enemy : enemies)
 	{
-		if(player->intersect(enemy))
+		e = dynamic_cast<Sprite*>(enemy);
+		if(player->intersect(e))
 		{
 		player->set_visible(false);
 		}
 	}
+	e = nullptr;
 }
 
 bool Level::shots_empty()
@@ -256,8 +278,6 @@ void Level::simulate_shot_path()
 				shot->angle_to_queue(
 						make_pair(shot->get_left_x(), shot->get_top_y()),
 						shot->get_angle());
-//				level_items.push_back(new Wall(shot->get_left_x(),
-//	            shot->get_top_y(), 4, 4,textures["shot"]));
 			}
 		}
 		shot->update_pos_simulation();

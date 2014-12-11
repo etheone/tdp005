@@ -5,6 +5,8 @@
 #ifndef SRC_ENEMY_H_
 #define SRC_ENEMY_H_
 #include "Player.h"
+#include <random>
+#include <bits/random.h>
 
 class Enemy : public Player
 {
@@ -13,9 +15,15 @@ public:
 			double angle, SDL_Texture*& texture, int health);
 	~Enemy();
 
+	void update();
+
+	int get_counter() const;
+
+
 
 private:
-
+	int speed;
+	int update_counter;
 };
 
 #endif /* SRC_ENEMY_H_ */

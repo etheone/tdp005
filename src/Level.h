@@ -30,6 +30,7 @@ public:
 
 	void simulate_shot_path();
 	void update_shots();
+	void update_enemy();
 
 	void player_collision_handler();
 
@@ -50,9 +51,11 @@ private:
 	std::vector<Sprite*> level_items;
 	std::vector<Shot*> shots;
 	std::vector<Animation*> animations;
-	std::vector<Sprite*> enemies;
+	std::vector<Enemy*> enemies;
 
 	SDL_Renderer*& renderer;
+
+	SDL_Rect back;
 };
 
 #endif /* SRC_LEVEL_H_ */
