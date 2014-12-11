@@ -68,7 +68,6 @@ void Play_State::handle_inputs()
 					event.motion.x - level->player->get_half_width(),
 					event.motion.y - level->player->get_half_height());
 
-			level->player_collision_handler();
 		}
 		else if (event.type == SDL_MOUSEBUTTONDOWN)
 		{
@@ -96,6 +95,8 @@ void Play_State::run_game_loop()
 		handle_inputs();
 		level->update_enemy();
 		level->enemy_collision_handler();
+		level->player_collision_handler();
+
 
 		if(!level->shots_empty())
 		{

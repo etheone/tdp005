@@ -45,8 +45,6 @@ Level::Level(SDL_Renderer*& renderer)
 	SDL_FreeSurface(temp);
 
 
-	player = new Player(40, 400, 40, 40, 0,textures["player"], 1);
-
 	level_items.push_back(new Wall(0, 0, 1200, 15, textures["outer_x"]));
 	level_items.push_back(new Wall(0, SCREEN_HEIGHT-15, 1200, 15, textures["outer_x"]));
 	level_items.push_back(new Wall(SCREEN_WIDTH-15, 0, 15, 800, textures["outer_y"]));
@@ -109,10 +107,10 @@ void Level::load_level(string filenumber)
 				level_items.push_back(new Wall(i*20, line_number*20, 20, 20, textures["wall"]));
 			}
 
-//			if (line[i] == objects["player"])
-//			{
-//				player = new Player(i*20 ,line_number*20 ,40, 40 , *textures["player"]);
-//			}
+			if (line[i] == objects["player"])
+			{
+				player = new Player(i*20 ,line_number*20 ,40, 40, 180, textures["player"], 1);
+			}
 
 			if (line[i] == objects["enemy"])
 			{
