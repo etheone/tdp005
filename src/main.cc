@@ -14,14 +14,19 @@ int main(int argc, char* argv[])
 	// CLASS INIT
 	Menu menu(g.get_renderer());
 	Play_State game(g.get_renderer());
+	string state{"menu"};
 
 	// MAIN LOOP
-	string state = menu.run();
-	if(state == "play")
+	while(state == "menu")
 	{
-		state = game.run();
+		state = menu.run();
+		if (state == "play_state")
+		{
+			state = game.run();
+		}
+
+		cout << state << endl;
 	}
-	cout << state << endl;
 
 
 	return 0;

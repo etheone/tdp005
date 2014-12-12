@@ -10,7 +10,7 @@
 using namespace std;
 
 Menu::Menu(SDL_Renderer*& renderer)
-: Abstract_Gamestate(renderer, "none"), running{true}
+: Abstract_Gamestate(renderer, "menu"), running{true}
 {
 	SDL_Surface* temp = IMG_Load("textures/start_game_button.png");
 	textures["button1"] = SDL_CreateTextureFromSurface(renderer, temp);
@@ -58,7 +58,7 @@ void Menu::handle_inputs()
 				 buttons["start_game"]->in_button_area(event.motion.x, event.motion.y))
 		{
 			running = false;
-			gamestate = "play";
+			gamestate = "play_state";
 		}
 	}
 }
@@ -66,6 +66,7 @@ void Menu::handle_inputs()
 
 string Menu::run()
 {
+	running = true;
 	gamestate = "none";
 	const Uint32 targetFrameDelay = 10;
 	Uint32 startTime = SDL_GetTicks();
@@ -76,7 +77,7 @@ string Menu::run()
 		Uint32 frameDelay = SDL_GetTicks() - lastFrameTime;
 		lastFrameTime += frameDelay;
 
-		//SDL_SetRelativeMouseMode(SDL_TRUE);
+		SDL_SetRelativeMouseMode(SDL_FALSE);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 

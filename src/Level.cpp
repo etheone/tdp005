@@ -57,38 +57,43 @@ Level::Level(SDL_Renderer*& renderer)
 
 Level::~Level()
 {
-	delete player;
-	player = nullptr;
+	clear_level();
+}
 
-	for(Enemy*& e : enemies)
+void Level::clear_level()
+{
+	delete player;
+		player = nullptr;
+
+		for(Enemy*& e : enemies)
+			{
+				delete e;
+				e = nullptr;
+			}
+
+		for(Shot*& s : shots)
 		{
-			delete e;
-			e = nullptr;
+			delete s;
+			s = nullptr;
 		}
 
-	for(Shot*& s : shots)
-	{
-		delete s;
-		s = nullptr;
-	}
+		for(Animation*& a : animations)
+		{
+			delete a;
+			a = nullptr;
+		}
 
-	for(Animation*& a : animations)
-	{
-		delete a;
-		a = nullptr;
-	}
+		for(map<string, SDL_Texture*>::iterator i = textures.begin();
+				i != textures.end(); ++i)
+		{
+			SDL_DestroyTexture(i->second);
+		}
 
-	for(map<string, SDL_Texture*>::iterator i = textures.begin();
-			i != textures.end(); ++i)
-	{
-		SDL_DestroyTexture(i->second);
-	}
-
-	for(Sprite*& l : level_items)
-	{
-		delete l;
-		l = nullptr;
-	}
+		for(Sprite*& l : level_items)
+		{
+			delete l;
+			l = nullptr;
+		}
 }
 
 
@@ -96,6 +101,7 @@ void Level::load_level(string filenumber)
 {
 	// Loads a level from a file.
 
+	current_level = filenumber;
 	string level_str = "levels/level" + current_level + ".txt";
 	ifstream file(level_str);
 	string line{""};
