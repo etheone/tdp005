@@ -19,8 +19,9 @@ int main(int argc, char* argv[])
 	string state = menu.run();
 	if(state == "play")
 	{
-		game.run();
+		state = game.run();
 	}
+	cout << state << endl;
 
 
 	return 0;
