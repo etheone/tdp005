@@ -10,9 +10,9 @@
 using namespace std;
 
 Level::Level(SDL_Renderer*& renderer)
-:current_level{"1"}, renderer{renderer}, back({0, 0, 1200, 800})
+:current_level{"2"}, renderer{renderer}, back({0, 0, 1200, 800})
 {
-	SDL_Surface* temp = IMG_Load("textures/20x20_wall.png");
+	SDL_Surface* temp = IMG_Load("textures/wall.png");
 	textures["wall"] = SDL_CreateTextureFromSurface(renderer,temp);
 	SDL_FreeSurface(temp);
 
