@@ -10,7 +10,7 @@
 using namespace std;
 
 Level::Level(SDL_Renderer*& renderer)
-:current_level{"1"}, renderer{renderer}, back({0, 0, 1200, 800})
+:player{nullptr}, current_level{"1"}, renderer{renderer}, back({0, 0, 1200, 800})
 {
 	SDL_Surface* temp = IMG_Load("textures/20x20_wall.png");
 	textures["wall"] = SDL_CreateTextureFromSurface(renderer,temp);
@@ -38,6 +38,10 @@ Level::Level(SDL_Renderer*& renderer)
 
 	temp = IMG_Load("textures/enemyship1.png");
 	textures["enemy"] = SDL_CreateTextureFromSurface(renderer, temp);
+	SDL_FreeSurface(temp);
+
+	temp = IMG_Load("textures/shipexplosion.png");
+	textures["ship_explosion"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
 	temp = IMG_Load("textures/space1.png");
@@ -90,8 +94,7 @@ Level::~Level()
 
 void Level::load_level(string filenumber)
 {
-//Loads a level from a file.
-	std::map<std::string, char> objects{{"wall", '#'}, {"player", 'p'}, {"enemy", 'e'}};
+	// Loads a level from a file.
 
 	string level_str = "levels/level" + current_level + ".txt";
 	ifstream file(level_str);
@@ -102,24 +105,28 @@ void Level::load_level(string filenumber)
 		getline(file, line);
 		for (unsigned int i{1}; i < 60; ++i)
 		{
-			if (line[i] == objects["wall"])
+			if (line[i] == '#')
 			{
 				level_items.push_back(new Wall(i*20, line_number*20, 20, 20, textures["wall"]));
 			}
 
-			if (line[i] == objects["player"])
+			if (line[i] == 'p')
 			{
 				player = new Player(i*20 ,line_number*20 ,40, 40, 180, textures["player"], 1);
 			}
 
-			if (line[i] == objects["enemy"])
+			if (line[i] == 'e')
 			{
-				enemies.push_back(new Enemy(i*20, line_number*20, 60, 60, 270, textures["enemy"], 25));
+				enemies.push_back(new Enemy(i*20, line_number*20, 60, 60, 270, textures["enemy"], 5));
 			}
 		}
 	}
 	file.close();
+}
 
+bool Level::no_enemies()
+{
+	return enemies.empty();
 }
 
 void Level::draw_level()
@@ -163,28 +170,36 @@ void Level::draw_level()
 
 void Level::update_enemy()
 {
-	for(Enemy* enemy : enemies)
+	for(vector<Enemy*>::iterator it{enemies.begin()}; it != enemies.end(); ++it)
 	{
-//		if(enemy->get_health() <= 0)
-//		{
-//			delete enemy;
-//		}
-		if(enemy->get_counter() == 40)
+		if((*it)->get_health() <= 0)
 		{
-			add_to_shots(enemy->get_middle_x(),
-						 enemy->get_middle_y(),
+			animations.push_back(new Animation(textures["ship_explosion"],
+											(*it)->get_middle_x(),
+											(*it)->get_middle_y(),
+											480, 60,
+											8, 5));
+			delete (*it);
+			enemies.erase(it);
+			break;
+		}
+
+		if((*it)->get_counter() == 40)
+		{
+			add_to_shots((*it)->get_middle_x(),
+						 (*it)->get_middle_y(),
 						 4, 4,
-						 enemy->get_angle(),
+						 (*it)->get_angle(),
 						 5, 3, false);
 			simulate_shot_path();
 		}
-		enemy->update();
+		(*it)->update();
 	}
 }
 
 void Level::update_shots()
 {
-	for(vector<Shot*>::iterator it{shots.begin()}; it !=shots.end(); ++it)
+	for(vector<Shot*>::iterator it{shots.begin()}; it != shots.end(); ++it)
 	{
 		if ((*it)->get_bounce_count() < 0 || (*it)->outside_screen())
 		{
@@ -226,10 +241,10 @@ void Level::update_shots()
 
 void Level::add_to_shots(double x, double y, int w, int h,
 				         double angle, int speed, int b,
-						 bool player_shot)
+						 bool player_shot, string text)
 {
 	shots.push_back(new Shot(x, y, w, h, angle,
-							 textures["shot"],
+							 textures[text],
 							 speed, b, player_shot));
 }
 
@@ -268,7 +283,7 @@ void Level::player_collision_handler()
 	}
 	for(Shot*& s : shots)
 	{
-		if(s->intersect(p) && s->get_harmless_time() > 10)
+		if(s->intersect(p) && s->get_harmless_time() > 20)
 		{
 			cout << "you ded" << endl;
 			player->decrease_health();

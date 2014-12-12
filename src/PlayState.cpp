@@ -39,44 +39,47 @@ void Play_State::handle_inputs()
 		{
 			running = false;
 		}
-		else if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_SPACE))
+		else if(gamestate == "play_state")
 		{
-			space_down = true;
-		}
-		else if (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_SPACE))
-		{
-			space_down = false;
-		}
-		else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
-		{
-			pause = true;
-			running = false;
-		}
-		else if (event.type == SDL_MOUSEMOTION)
-		{
-			diff_x += (event.motion.x - level->player->get_middle_x());
-			diff_y += (event.motion.y - level->player->get_middle_y());
-			++angle_wait;
-			if(angle_wait >= 5 && !space_down)
+			if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_SPACE))
 			{
-				level->player->set_angle(calculate_angle(diff_x, diff_y) + 90);
-				angle_wait = 0;
-				diff_x = 0;
-				diff_y = 0;
+				space_down = true;
 			}
-			level->player->set_position(
-					event.motion.x - level->player->get_half_width(),
-					event.motion.y - level->player->get_half_height());
+			else if (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_SPACE))
+			{
+				space_down = false;
+			}
+			else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
+			{
+				pause = true;
+				running = false;
+			}
+			else if (event.type == SDL_MOUSEMOTION)
+			{
+				diff_x += (event.motion.x - level->player->get_middle_x());
+				diff_y += (event.motion.y - level->player->get_middle_y());
+				++angle_wait;
+				if(angle_wait >= 5 && !space_down)
+				{
+					level->player->set_angle(calculate_angle(diff_x, diff_y) + 90);
+					angle_wait = 0;
+					diff_x = 0;
+					diff_y = 0;
+				}
+				level->player->set_position(
+						event.motion.x - level->player->get_half_width(),
+						event.motion.y - level->player->get_half_height());
 
-		}
-		else if (event.type == SDL_MOUSEBUTTONDOWN)
-		{
-			level->add_to_shots(level->player->get_middle_x(),
-								level->player->get_middle_y(),
-								4, 4,
-								level->player->get_angle(),
-								5, 3, true);
-			level->simulate_shot_path();
+			}
+			else if (event.type == SDL_MOUSEBUTTONDOWN)
+			{
+				level->add_to_shots(level->player->get_middle_x(),
+									level->player->get_middle_y(),
+									4, 4,
+									level->player->get_angle(),
+									5, 3, true);
+				level->simulate_shot_path();
+			}
 		}
 	}
 }
@@ -87,20 +90,31 @@ void Play_State::run_game_loop()
 	Uint32 startTime = SDL_GetTicks();
 	Uint32 lastFrameTime = startTime;
 
-	while(running && level->player->get_health() > 0)
+	while(running)
 	{
 		Uint32 frameDelay = SDL_GetTicks() - lastFrameTime;
 		lastFrameTime += frameDelay;
 
 		handle_inputs();
-		level->update_enemy();
-		level->enemy_collision_handler();
-		level->player_collision_handler();
-
-
-		if(!level->shots_empty())
+		if(level->player->get_health() <= 0)
 		{
-			level->update_shots();
+			gamestate = "dead";
+		}
+		else if(level->no_enemies())
+		{
+			gamestate = "YOU WON!";
+		}
+		else
+		{
+			handle_inputs();
+			level->update_enemy();
+			level->enemy_collision_handler();
+			level->player_collision_handler();
+
+			if(!level->shots_empty())
+			{
+				level->update_shots();
+			}
 		}
 
 		//SDL_SetRelativeMouseMode(SDL_TRUE);
