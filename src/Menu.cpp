@@ -12,11 +12,21 @@ using namespace std;
 Menu::Menu(SDL_Renderer*& renderer)
 : Abstract_Gamestate(renderer, "menu"), running{true}
 {
-	SDL_Surface* temp = IMG_Load("textures/start_game_button.png");
+	SDL_Surface* temp = IMG_Load("textures/start_button.png");
 	textures["button1"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
-	buttons["start_game"] = new Button(250, 100, 600, 100, textures["button1"]);
+	temp = IMG_Load("textures/quit_button.png");
+	textures["button2"] = SDL_CreateTextureFromSurface(renderer, temp);
+	SDL_FreeSurface(temp);
+
+	temp = IMG_Load("textures/highscore_button.png");
+	textures["button3"] = SDL_CreateTextureFromSurface(renderer, temp);
+	SDL_FreeSurface(temp);
+
+	buttons["start_game"] = new Button(500, 190, 187, 85, textures["button1"]);
+	buttons["highscore_button"] = new Button(420, 320, 355, 166, textures["button3"]);
+	buttons["quit_game"] = new Button(500, 520, 174, 100, textures["button2"]);
 }
 
 Menu::~Menu()
@@ -50,7 +60,9 @@ void Menu::handle_inputs()
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
 	{
-		if (event.type == SDL_QUIT)
+		if (event.type == SDL_QUIT ||
+		   (event.type == SDL_MOUSEBUTTONDOWN &&
+				   buttons["quit_game"]->in_button_area(event.motion.x, event.motion.y)))
 		{
 			running = false;
 		}
@@ -60,6 +72,7 @@ void Menu::handle_inputs()
 			running = false;
 			gamestate = "play_state";
 		}
+
 	}
 }
 
