@@ -160,5 +160,5 @@ string Play_State::run()
 			run_game_loop();
 		}
 	}
-	return "inactive";
+	return gamestate;
 }

@@ -103,7 +103,7 @@ void Level::load_level(string filenumber)
 	for(int line_number{1}; line_number < 40; ++line_number)
 	{
 		getline(file, line);
-		for (unsigned int i{1}; i < 60; ++i)
+		for (unsigned int i{1}; i < 60 && i < line.length(); ++i)
 		{
 			if (line[i] == '#')
 			{
@@ -279,6 +279,13 @@ void Level::player_collision_handler()
 		{
 			cout << "you crashed" << endl;
 			player->decrease_health();
+			animations.push_back(new Animation(textures["ship_explosion"],
+														player->get_middle_x(),
+														player->get_middle_y(),
+														480, 60,
+														8, 20));
+			player->set_visible(false);
+
 		}
 	}
 	for(Shot*& s : shots)
@@ -287,6 +294,12 @@ void Level::player_collision_handler()
 		{
 			cout << "you ded" << endl;
 			player->decrease_health();
+			animations.push_back(new Animation(textures["ship_explosion"],
+																	player->get_middle_x(),
+																	player->get_middle_y(),
+																	480, 60,
+																	8, 20));
+			player->set_visible(false);
 		}
 	}
 	p = nullptr;
