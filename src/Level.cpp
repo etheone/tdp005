@@ -10,9 +10,13 @@
 using namespace std;
 
 Level::Level(SDL_Renderer*& renderer)
+<<<<<<< HEAD
+:current_level{"2"}, renderer{renderer}, back({0, 0, 1200, 800})
+=======
 :player{nullptr}, current_level{"1"}, renderer{renderer}, back({0, 0, 1200, 800})
+>>>>>>> branch 'master' of git@gitlab.ida.liu.se:emini901/starcrossed.git
 {
-	SDL_Surface* temp = IMG_Load("textures/20x20_wall.png");
+	SDL_Surface* temp = IMG_Load("textures/wall.png");
 	textures["wall"] = SDL_CreateTextureFromSurface(renderer,temp);
 	SDL_FreeSurface(temp);
 
