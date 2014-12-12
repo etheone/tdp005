@@ -57,17 +57,12 @@ void Play_State::handle_inputs()
 			{
 				space_down = false;
 			}
-			else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
-			{
-				pause = true;
-				running = false;
-			}
 			else if (event.type == SDL_MOUSEMOTION)
 			{
 				diff_x += (event.motion.x - level->player->get_middle_x());
 				diff_y += (event.motion.y - level->player->get_middle_y());
 				++angle_wait;
-				if(angle_wait >= 5 && !space_down)
+				if(angle_wait >= 8 && !space_down)
 				{
 					level->player->set_angle(calculate_angle(diff_x, diff_y) + 90);
 					angle_wait = 0;
@@ -111,14 +106,12 @@ void Play_State::run_game_loop()
 			//game_over = true;
 			gamestate = "menu";
 			SDL_SetRelativeMouseMode(SDL_FALSE);
-
 		}
 		else if(level->no_enemies())
 		{
 			// level_complete = true;
 			gamestate = "YOU WON!";
 			SDL_SetRelativeMouseMode(SDL_FALSE);
-
 		}
 		else
 		{
@@ -155,6 +148,7 @@ void Play_State::run_game_loop()
 string Play_State::run()
 {
 	running = true;
+	space_down = false;
 	gamestate = "play_state";
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 

@@ -43,12 +43,10 @@ public:
 	bool shots_empty();
 	bool no_enemies();
 
-
-
 	Player* player;
 
 private:
-
+//	int score;
 	std::string current_level;
 
 	std::map<std::string, SDL_Texture*> textures;
