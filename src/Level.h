@@ -38,6 +38,7 @@ public:
 					  double angle, int speed, int b,
 					  bool player_shot, std::string = "shot");
 	void enemy_collision_handler();
+	void clear_level();
 
 	bool shots_empty();
 	bool no_enemies();

@@ -19,6 +19,8 @@ public:
 
 	std::string run();
 	void run_game_loop();
+	void clear_play_state();
+
 
 	void handle_inputs();
 

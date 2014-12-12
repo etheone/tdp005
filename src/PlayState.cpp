@@ -18,6 +18,12 @@ Play_State::Play_State(SDL_Renderer*& renderer) :
 
 Play_State::~Play_State()
 {
+	clear_play_state();
+
+}
+
+void Play_State::clear_play_state()
+{
 	delete level;
 	level = nullptr;
 }
@@ -35,7 +41,9 @@ void Play_State::handle_inputs()
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
 	{
-		if (event.type == SDL_QUIT)
+		if (event.type == SDL_QUIT ||
+				((gamestate != "play_state") &&
+				(event.type == SDL_MOUSEBUTTONDOWN)))
 		{
 			running = false;
 		}
@@ -86,6 +94,8 @@ void Play_State::handle_inputs()
 
 void Play_State::run_game_loop()
 {
+	//bool level_complete{false};
+	//bool game_over{false};
 	const Uint32 targetFrameDelay = 10;
 	Uint32 startTime = SDL_GetTicks();
 	Uint32 lastFrameTime = startTime;
@@ -98,15 +108,20 @@ void Play_State::run_game_loop()
 		handle_inputs();
 		if(level->player->get_health() <= 0)
 		{
-			gamestate = "dead";
+			//game_over = true;
+			gamestate = "menu";
+			SDL_SetRelativeMouseMode(SDL_FALSE);
+
 		}
 		else if(level->no_enemies())
 		{
+			// level_complete = true;
 			gamestate = "YOU WON!";
+			SDL_SetRelativeMouseMode(SDL_FALSE);
+
 		}
 		else
 		{
-			handle_inputs();
 			level->update_enemy();
 			level->enemy_collision_handler();
 			level->player_collision_handler();
@@ -139,26 +154,15 @@ void Play_State::run_game_loop()
 
 string Play_State::run()
 {
+	running = true;
+	gamestate = "play_state";
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+
 	level = new Level(renderer);
 	level->load_level("1");
 
 	run_game_loop();
+	clear_play_state();
 
-	// Handles Pause-button.
-	SDL_Event event;
-	while(pause)
-	{
-		SDL_PollEvent(&event);
-		if (event.type == SDL_QUIT)
-			{
-				pause = false;
-			}
-		else if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_p))
-		{
-			pause = false;
-			running = true;
-			run_game_loop();
-		}
-	}
 	return gamestate;
 }
