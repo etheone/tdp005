@@ -25,6 +25,7 @@ public:
 	void handle_inputs();
 
 private:
+	int score;
 
 	bool running;
 

@@ -7,11 +7,30 @@
 
 #include "Level.h"
 
+
 using namespace std;
 
 Level::Level(SDL_Renderer*& renderer)
-:player{nullptr}, current_level{"1"}, renderer{renderer}, back({0, 0, 1200, 800})
+:player{nullptr}, level_score{0}, current_level{"1"}, renderer{renderer}, back({0, 0, 1200, 800})
 {
+	// Initialize the font, set to white
+//	TTF_Init();
+//	font = TTF_OpenFont("FreeSans.ttf", 28);
+//	if(font == nullptr)
+//	{
+//		cout << "FUUUUCK";
+//	}
+//    textColor = { 255, 255, 255, 0 };
+//
+//	std::string score_text = string("score: ") + string("10");
+//	cout << score_text << endl;
+//	SDL_Surface* textSurface = TTF_RenderText_Solid(font, score_text.c_str(), textColor);
+//	textures["text"] = SDL_CreateTextureFromSurface(renderer, textSurface);
+//	int text_width = textSurface->w;
+//	int text_height = textSurface->h;
+//	SDL_FreeSurface(textSurface);
+//	renderQuad = { 200, 200 , text_width, text_height};
+
 	SDL_Surface* temp = IMG_Load("textures/20x20_wall.png");
 	textures["wall"] = SDL_CreateTextureFromSurface(renderer,temp);
 	SDL_FreeSurface(temp);
@@ -58,6 +77,12 @@ Level::Level(SDL_Renderer*& renderer)
 Level::~Level()
 {
 	clear_level();
+//
+//	// Quit SDL_ttf
+//	TTF_Quit();
+//
+//	 // Close the font that was used
+//	TTF_CloseFont( font );
 }
 
 void Level::clear_level()
@@ -96,6 +121,20 @@ void Level::clear_level()
 		}
 }
 
+bool Level::combine_y_walls(int x , int y)
+{
+	for (Sprite*& wall : level_items)
+	{
+		if ( wall->get_left_x() == x &&
+			 wall->get_half_width()*2 == 20 &&
+			 wall->get_bottom_y() == y )
+		{
+			wall->increase_height(20);
+			return true;
+		}
+	}
+	return false;
+}
 
 void Level::load_level(string filenumber)
 {
@@ -106,14 +145,29 @@ void Level::load_level(string filenumber)
 	ifstream file(level_str);
 	string line{""};
 
+	// The awesome and epic purpose of this int is to make several walls in a line
+	// merge into one single wall to prevent the occasional bouncing bug and reduce
+	// the amount of collision checks at the same time... Genius
+	int last_wall_left{-1};
+
 	for(int line_number{1}; line_number < 40; ++line_number)
 	{
+		last_wall_left = -1;
 		getline(file, line);
-		for (unsigned int i{1}; i < 60 && i < line.length(); ++i)
+		for (int i{1}; i < 60 && i < int(line.length()); ++i)
 		{
 			if (line[i] == '#')
 			{
-				level_items.push_back(new Wall(i*20, line_number*20, 20, 20, textures["wall"]));
+				if(last_wall_left == i-1)
+				{
+					level_items.back()->increase_width(20);
+					last_wall_left = i;
+				}
+				else if(!combine_y_walls(i*20, line_number*20))
+				{
+					level_items.push_back(new Wall(i*20, line_number*20, 20, 20, textures["wall"]));
+					last_wall_left = i;
+				}
 			}
 
 			if (line[i] == 'p')
@@ -135,19 +189,14 @@ bool Level::no_enemies()
 	return enemies.empty();
 }
 
+
+void Level::draw_score()
+{
+//	SDL_RenderCopy(renderer, textures["text"], nullptr, &renderQuad);
+}
+
 void Level::draw_level()
 {
-//std::string score_text = "score: " + std::to_string(score);
-//SDL_Color textColor = { 255, 255, 255, 0 };
-//SDL_Surface* textSurface = TTF_RenderText_Solid(font, score_text.c_str(), textColor);
-//SDL_Texture* text = SDL_CreateTextureFromSurface(renderer, textSurface);
-//int text_width = textSurface->w;
-//int text_height = textSurface->h;
-//SDL_FreeSurface(textSurface);
-//SDL_Rect renderQuad = { 20, win_height - 30, text_width, text_height };
-//SDL_RenderCopy(renderer, text, NULL, &renderQuad);
-//SDL_DestroyTexture(text);
-
 	SDL_RenderCopy(renderer, textures["background"], nullptr, &back);
 
 	player->render_copy(renderer);
@@ -242,7 +291,6 @@ void Level::update_shots()
 													256, 32,
 													8, 3));
 					enemy->decrease_health();
-					cout << enemy->get_health() << endl;
 					delete *it;
 					shots.erase(it);
 					return;

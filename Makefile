@@ -2,13 +2,16 @@
 CC=g++
 SRC_DIR=src
 # Flaggorna till kompilatorn:
-CFLAGS=-g -c -std=c++11 -Wall -Wextra -Wpedantic -ggdb -Wno-unused-parameter -I$(SRC_DIR)
+CFLAGS=-g -c -std=c++11 -Wall -Wextra -Wpedantic -ggdb\
+ -Wno-unused-parameter -I$(SRC_DIR)
 # Flaggorna till länkaren:
-LFLAGS=-lSDL2main -lSDL2 -lSDL2_image
+LFLAGS=-lSDL2main -lSDL2 -lSDL2_image -lSDL_ttf -lfreetype
 
 all: Starcrossed
 
-Starcrossed: main.o PlayState.o wall.o Level.o Button.o Menu.o Sprite.o Shot.o Enemy.o Player.o AbstractGamestate.o GameScreen.o Animation.o Image.o
+Starcrossed: main.o PlayState.o wall.o Level.o Button.o \
+Menu.o Sprite.o Shot.o Enemy.o Player.o AbstractGamestate.o\
+GameScreen.o Animation.o Image.o
 	$(CC) *.o  $(LFLAGS) -o Starcrossed
 
 main.o: $(SRC_DIR)/main.cc

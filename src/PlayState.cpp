@@ -10,7 +10,7 @@
 using namespace std;
 
 Play_State::Play_State(SDL_Renderer*& renderer) :
-		Abstract_Gamestate(renderer, "play_state"), running{true},
+		Abstract_Gamestate(renderer, "play_state"), score{0}, running{true},
 		level{nullptr}, space_down{false},
 		diff_x{0}, diff_y{0}, angle_wait{0}, pause{false}
 {

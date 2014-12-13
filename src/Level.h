@@ -19,6 +19,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 class Level
 {
@@ -27,6 +28,7 @@ public:
 	virtual ~Level();
 	void load_level(std::string filename);
 	void draw_level();
+
 
 	void simulate_shot_path();
 	void update_shots();
@@ -46,7 +48,7 @@ public:
 	Player* player;
 
 private:
-//	int score;
+	int level_score;
 	std::string current_level;
 
 	std::map<std::string, SDL_Texture*> textures;
@@ -55,9 +57,18 @@ private:
 	std::vector<Animation*> animations;
 	std::vector<Enemy*> enemies;
 
-	SDL_Renderer*& renderer;
+//	TTF_Font* font;
+//	SDL_Color textColor;
+//	SDL_Rect renderQuad;
 
+
+	SDL_Renderer*& renderer;
 	SDL_Rect back;
+
+	void draw_score();
+
+	bool combine_y_walls(int x , int y);
+
 };
 
 #endif /* SRC_LEVEL_H_ */

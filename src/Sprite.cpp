@@ -76,6 +76,17 @@ void Sprite::set_position(double x, double y)
 	rectangle.y = round(exact_y);
 }
 
+void Sprite::increase_width(int increase)
+{
+	rectangle.w += increase;
+}
+
+void Sprite::increase_height(int increase)
+{
+	rectangle.h += increase;
+}
+
+
 void Sprite::render_copy(SDL_Renderer*& renderer)
 {
 	if(visible)

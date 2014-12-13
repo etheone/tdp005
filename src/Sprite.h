@@ -45,6 +45,10 @@ public:
 	void set_angle(double new_angle);
 	void set_position(double x, double y);
 
+	void increase_width(int increase);
+	void increase_height(int increase);
+
+
 
 protected:
 	double angle;

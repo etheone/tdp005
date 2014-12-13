@@ -12,7 +12,7 @@ using namespace std;
 Game_Screen::Game_Screen(const int& screen_width, const int& screen_height)
 : screen_width{screen_width} , screen_height{screen_height}
 {
-	if (SDL_Init(SDL_INIT_VIDEO) != 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) != 0)
 		{
 			cerr << "Error initializing SDL" << endl;
 			exit(1);
