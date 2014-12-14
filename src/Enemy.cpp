@@ -20,10 +20,18 @@ int Enemy::get_counter() const
 {
 	return update_counter;
 }
-
-void Enemy::update()
+void Enemy::update_pos()
 {
-	// Is declared here because eclipse can't compile properly otherwise.
+	exact_x += speed * sin((angle)*(PI/180));
+	exact_y += speed * -cos((angle)*(PI/180));
+
+	rectangle.x = round(exact_x);
+	rectangle.y = round(exact_y);
+}
+
+void Enemy::update(const vector<Sprite*>& walls)
+{
+	// Random is declared here because eclipse can't compile properly otherwise.
 
 
 	if(update_counter == 100)
@@ -33,13 +41,17 @@ void Enemy::update()
 		angle = distribution(randint);
 		update_counter = 0;
 	}
+	else if( any_of(walls.begin(), walls.end(),
+			[this](Sprite* s){return intersect(s);}))
+	{
+		angle += 180;
+		cout << "collision "<< endl;
+		update_pos();
+		update_pos();
+	}
 	else if(update_counter % 10 == 0)
 	{
-		exact_x += speed * sin((angle)*(PI/180));
-		exact_y += speed * -cos((angle)*(PI/180));
-
-		rectangle.x = round(exact_x);
-		rectangle.y = round(exact_y);
+		update_pos();
 	}
 	++update_counter;
 }

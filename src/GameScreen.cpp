@@ -12,11 +12,17 @@ using namespace std;
 Game_Screen::Game_Screen(const int& screen_width, const int& screen_height)
 : screen_width{screen_width} , screen_height{screen_height}
 {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) != 0)
+	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 		{
 			cerr << "Error initializing SDL" << endl;
 			exit(1);
 		}
+	if(TTF_Init() != 0)
+	{
+		cerr << "Error initializing TTF" << endl;
+		exit(1);
+	}
+
 		//create the window
 		window = SDL_CreateWindow("SDL_Test",SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 															screen_width, screen_height, 0);
@@ -51,6 +57,7 @@ Game_Screen::~Game_Screen()
 	window = nullptr;
 
 	SDL_Quit();
+	TTF_Quit();
 
 }
 

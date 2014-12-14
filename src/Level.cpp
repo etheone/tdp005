@@ -13,9 +13,7 @@ using namespace std;
 Level::Level(SDL_Renderer*& renderer)
 :player{nullptr}, level_score{0}, current_level{"1"}, renderer{renderer}, back({0, 0, 1200, 800})
 {
-	// Initialize the font, set to white
-//	TTF_Init();
-//	font = TTF_OpenFont("FreeSans.ttf", 28);
+//	font = TTF_OpenFont("FreeSans.ttf", 16);
 //	if(font == nullptr)
 //	{
 //		cout << "FUUUUCK";
@@ -77,12 +75,7 @@ Level::Level(SDL_Renderer*& renderer)
 Level::~Level()
 {
 	clear_level();
-//
-//	// Quit SDL_ttf
-//	TTF_Quit();
-//
-//	 // Close the font that was used
-//	TTF_CloseFont( font );
+
 }
 
 void Level::clear_level()
@@ -119,6 +112,9 @@ void Level::clear_level()
 			delete l;
 			l = nullptr;
 		}
+
+		 // Close the font that was used
+//			TTF_CloseFont( font );
 }
 
 bool Level::combine_y_walls(int x , int y)
@@ -258,7 +254,7 @@ void Level::update_enemy()
 						 5, 3, false);
 			simulate_shot_path();
 		}
-		(*it)->update();
+		(*it)->update(level_items);
 	}
 }
 

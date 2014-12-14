@@ -15,7 +15,8 @@ public:
 			double angle, SDL_Texture*& texture, int health);
 	~Enemy();
 
-	void update();
+	void update(const std::vector<Sprite*>& walls);
+	void update_pos();
 
 	int get_counter() const;
 
