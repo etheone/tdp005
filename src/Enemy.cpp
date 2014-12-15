@@ -41,7 +41,7 @@ void Enemy::update(const vector<Sprite*>& walls)
 		angle = distribution(randint);
 		update_counter = 0;
 	}
-	else if( any_of(walls.begin(), walls.end(),
+	else if(any_of(walls.begin(), walls.end(),
 			[this](Sprite* s){return intersect(s);}))
 	{
 		angle += 180;

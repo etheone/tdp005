@@ -26,7 +26,7 @@ class Level
 public:
 	Level(SDL_Renderer*& renderer);
 	virtual ~Level();
-	void load_level(std::string filename);
+	void load_level(int level);
 	void draw_level();
 
 
@@ -49,7 +49,6 @@ public:
 
 private:
 	int level_score;
-	std::string current_level;
 
 	std::map<std::string, SDL_Texture*> textures;
 	std::vector<Sprite*> level_items;
@@ -57,9 +56,10 @@ private:
 	std::vector<Animation*> animations;
 	std::vector<Enemy*> enemies;
 
-//	TTF_Font* font;
-//	SDL_Color textColor;
-//	SDL_Rect renderQuad;
+	SDL_Texture* temp_score;
+	TTF_Font* font;
+	SDL_Color textColor;
+	SDL_Rect renderQuad;
 
 
 	SDL_Renderer*& renderer;

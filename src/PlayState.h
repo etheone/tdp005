@@ -30,6 +30,8 @@ private:
 	bool running;
 
 	Level* level;
+	int current_level;
+
 
 	bool space_down;
 	double diff_x;

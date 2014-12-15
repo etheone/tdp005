@@ -11,23 +11,17 @@
 using namespace std;
 
 Level::Level(SDL_Renderer*& renderer)
-:player{nullptr}, level_score{0}, current_level{"1"}, renderer{renderer}, back({0, 0, 1200, 800})
+:player{nullptr}, level_score{0}, temp_score{nullptr},
+ renderer{renderer}, back({0, 0, 1200, 800})
 {
-//	font = TTF_OpenFont("FreeSans.ttf", 16);
-//	if(font == nullptr)
-//	{
-//		cout << "FUUUUCK";
-//	}
-//    textColor = { 255, 255, 255, 0 };
-//
-//	std::string score_text = string("score: ") + string("10");
-//	cout << score_text << endl;
-//	SDL_Surface* textSurface = TTF_RenderText_Solid(font, score_text.c_str(), textColor);
-//	textures["text"] = SDL_CreateTextureFromSurface(renderer, textSurface);
-//	int text_width = textSurface->w;
-//	int text_height = textSurface->h;
-//	SDL_FreeSurface(textSurface);
-//	renderQuad = { 200, 200 , text_width, text_height};
+	font = TTF_OpenFont("FreeSans.ttf", 16);
+	if(font == nullptr)
+	{
+		cout << "FUUUUCK";
+	}
+    textColor = { 255, 255, 255, 0 };
+
+
 
 	SDL_Surface* temp = IMG_Load("textures/20x20_wall.png");
 	textures["wall"] = SDL_CreateTextureFromSurface(renderer,temp);
@@ -114,7 +108,7 @@ void Level::clear_level()
 		}
 
 		 // Close the font that was used
-//			TTF_CloseFont( font );
+			TTF_CloseFont( font );
 }
 
 bool Level::combine_y_walls(int x , int y)
@@ -132,12 +126,11 @@ bool Level::combine_y_walls(int x , int y)
 	return false;
 }
 
-void Level::load_level(string filenumber)
+void Level::load_level(int level)
 {
 	// Loads a level from a file.
 
-	current_level = filenumber;
-	string level_str = "levels/level" + current_level + ".txt";
+	string level_str = "levels/level" + to_string(level )+ ".txt";
 	ifstream file(level_str);
 	string line{""};
 
@@ -188,7 +181,18 @@ bool Level::no_enemies()
 
 void Level::draw_score()
 {
-//	SDL_RenderCopy(renderer, textures["text"], nullptr, &renderQuad);
+	std::string score_text = string("score: ") + string("10");
+
+	SDL_Surface* textSurface = TTF_RenderText_Solid(font, score_text.c_str(), textColor);
+	temp_score = SDL_CreateTextureFromSurface(renderer, textSurface);
+	int text_width = textSurface->w;
+	int text_height = textSurface->h;
+	SDL_FreeSurface(textSurface);
+	renderQuad = { 200, 200 , text_width, text_height};
+
+	SDL_RenderCopy(renderer, temp_score, nullptr, &renderQuad);
+	SDL_DestroyTexture(temp_score);
+	temp_score = nullptr;
 }
 
 void Level::draw_level()
@@ -227,6 +231,7 @@ void Level::draw_level()
 			break;
 		}
 	}
+	draw_score();
 }
 
 void Level::update_enemy()

@@ -11,7 +11,7 @@ using namespace std;
 
 Play_State::Play_State(SDL_Renderer*& renderer) :
 		Abstract_Gamestate(renderer, "play_state"), score{0}, running{true},
-		level{nullptr}, space_down{false},
+		level{nullptr}, current_level{1}, space_down{false},
 		diff_x{0}, diff_y{0}, angle_wait{0}, pause{false}
 {
 }
@@ -110,7 +110,7 @@ void Play_State::run_game_loop()
 		else if(level->no_enemies())
 		{
 			// level_complete = true;
-			gamestate = "YOU WON!";
+			gamestate = "next_level";
 			SDL_SetRelativeMouseMode(SDL_FALSE);
 		}
 		else
@@ -152,11 +152,21 @@ string Play_State::run()
 	gamestate = "play_state";
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 
+	if (current_level == 4)
+	{
+		current_level = 1;
+	}
 	level = new Level(renderer);
-	level->load_level("1");
-
+	level->load_level(current_level);
 	run_game_loop();
 	clear_play_state();
+
+	if(gamestate == "next_level")
+	{
+		++current_level;
+		gamestate = "menu";
+	}
+	cout << current_level << gamestate << endl;
 
 	return gamestate;
 }
