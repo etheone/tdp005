@@ -2,8 +2,9 @@
 
 using namespace std;
 
-Wall::Wall(double x, double y, int width, int height, SDL_Texture*& texture)
-		: Sprite(x, y, width, height, 0, texture)
+Wall::Wall(const double& x, const double& y, const int& width,
+		   const int& height, SDL_Texture*& texture)
+: Sprite(x, y, width, height, 0, texture)
 {
 }
 

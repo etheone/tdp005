@@ -16,12 +16,12 @@ public:
 			double angle, SDL_Texture*& texture, int health);
 	~Player();
 
-	int get_health();
+	int get_health() const;
+
 	void decrease_health();
 
 private:
 	int health;
-
 };
 
 #endif /* SRC_PLAYER_H_ */

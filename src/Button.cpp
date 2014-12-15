@@ -7,7 +7,9 @@
 
 #include "Button.h"
 
-Button::Button(double x, double y, int w, int h, SDL_Texture*& texture)
+Button::Button(const double& x, const double& y,
+		   	   const int& w, const int& h,
+			   SDL_Texture*& texture)
 : Image{x, y, w, h, texture}
 {
 	// TODO Auto-generated constructor stub
@@ -17,7 +19,7 @@ Button::~Button()
 {
 }
 
-bool Button::in_button_area(int x, int y)
+bool Button::in_button_area(const int& x, const int& y)
 {
 	return x < rectangle.x + rectangle.w &&
 		   x > rectangle.x &&

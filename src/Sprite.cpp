@@ -13,9 +13,9 @@ Sprite::~Sprite()
 {
 }
 
-Sprite::Sprite(double x, double y, int width, int height,
-				double angle, SDL_Texture*& texture)
-: Image{x, y, width, height, texture}, angle{angle}, short_side{false}
+Sprite::Sprite(const double& x, const double& y, const int& width, const int& height,
+				const double& angle, SDL_Texture*& texture)
+: Image{x, y, width, height, texture}, angle{angle}
 {
 }
 
@@ -23,6 +23,7 @@ double Sprite::get_angle() const
 {
 	return angle;
 }
+
 double Sprite::get_left_x() const
 {
 	return exact_x;
@@ -63,12 +64,12 @@ double Sprite::get_half_width() const
 	return rectangle.w/2;
 }
 
-void Sprite::set_angle(double new_angle)
+void Sprite::set_angle(const double& new_angle)
 {
 	angle = new_angle;
 }
 
-void Sprite::set_position(double x, double y)
+void Sprite::set_position(const double& x, const double& y)
 {
 	exact_x = x;
 	exact_y = y;
@@ -76,16 +77,15 @@ void Sprite::set_position(double x, double y)
 	rectangle.y = round(exact_y);
 }
 
-void Sprite::increase_width(int increase)
+void Sprite::increase_width(const int& increase)
 {
 	rectangle.w += increase;
 }
 
-void Sprite::increase_height(int increase)
+void Sprite::increase_height(const int& increase)
 {
 	rectangle.h += increase;
 }
-
 
 void Sprite::render_copy(SDL_Renderer*& renderer)
 {
@@ -105,4 +105,3 @@ bool Sprite::intersect(Sprite*& s) const
 
 	return check_y1 && check_x1 && check_y2 && check_x2;
 }
-

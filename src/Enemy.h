@@ -20,8 +20,6 @@ public:
 
 	int get_counter() const;
 
-
-
 private:
 	double speed;
 	int update_counter;

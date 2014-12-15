@@ -5,7 +5,7 @@ SRC_DIR=src
 CFLAGS=-g -c -std=c++11 -Wall -Wextra -Wpedantic -ggdb\
  -Wno-unused-parameter -I$(SRC_DIR)
 # Flaggorna till länkaren:
-LFLAGS=-lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
+LFLAGS=-lSDL2 -lSDL2_image -lSDL2_ttf
 
 all: Starcrossed
 

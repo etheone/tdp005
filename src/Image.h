@@ -13,27 +13,28 @@
 #include <SDL2/SDL_image.h>
 #include <algorithm>
 
+const int SCREEN_WIDTH = 1200;
+const int SCREEN_HEIGHT = 850;
+
 class Image {
 public:
-	Image(double x, double y, int width, int height,
-			SDL_Texture*& texture);
-	virtual ~Image()=0;
+	Image(const double& x, const double& y, const int& width,
+			const int& height, SDL_Texture*& texture);
+	virtual ~Image() = 0;
 
-	void load_texture(SDL_Renderer*& renderer);
 	virtual void render_copy(SDL_Renderer*& renderer);
 
 	void logSDLError(std::ostream &os, const std::string &msg);
 
-	void set_visible(bool v);
+	void set_visible(const bool& v);
 	bool get_visible();
-
 
 protected:
 	SDL_Texture*& image;
 	SDL_Rect rectangle;
 
-	// Gives very accurate "double coordinates"
-	//for top-left corner.
+	// Gives very accurate "double" coordinates
+	// for top-left corner.
 	double exact_x;
 	double exact_y;
 

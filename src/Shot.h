@@ -12,22 +12,21 @@
 class Shot : public Sprite
 {
 public:
-	Shot(double x, double y,
-		int width, int height,
-		double angle, SDL_Texture*& texture,
-		int speed, int bounce_count, bool player_shot);
+	Shot(const double& x, const double& y,
+		const int& width, const int& height,
+		const double& angle, SDL_Texture*& texture,
+		const int& speed, const int& bounce_count, const bool& player_shot);
 	~Shot();
 
 	void angle_to_queue(std::pair<double, double>, double a);
 
 	void reduce_bounce_count();
-	void set_bounce_count(int x);
+	void set_bounce_count(const int& x);
 
 	int get_bounce_count() const;
 	int get_speed() const;
 	int get_harmless_time() const;
-	bool is_player_shot();
-
+	bool is_player_shot() const;
 
 	double calculate_angle_update(Sprite*&);
 
@@ -39,7 +38,7 @@ public:
 
 private:
 	int bounce_count;
-	int speed;
+	const int speed;
 	int harmless_time;
 	bool player_shot;
 

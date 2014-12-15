@@ -17,7 +17,7 @@ Player::~Player()
 {
 }
 
-int Player::get_health()
+int Player::get_health() const
 {
 	return health;
 }
@@ -26,6 +26,3 @@ void Player::decrease_health()
 {
 	--health;
 }
-
-
-

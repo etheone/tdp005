@@ -16,30 +16,30 @@ Menu::Menu(SDL_Renderer*& renderer)
 	textures["button1"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
-	temp = IMG_Load("textures/quit_button.png");
+	temp = IMG_Load("textures/highscore_button.png");
 	textures["button2"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
-	temp = IMG_Load("textures/highscore_button.png");
+	temp = IMG_Load("textures/quit_button.png");
 	textures["button3"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
 	buttons["start_game"] = new Button(500, 190, 187, 85, textures["button1"]);
-	buttons["highscore_button"] = new Button(420, 320, 355, 166, textures["button3"]);
-	buttons["quit_game"] = new Button(500, 520, 174, 100, textures["button2"]);
+	buttons["highscore_button"] = new Button(420, 320, 355, 166, textures["button2"]);
+	buttons["quit_game"] = new Button(500, 520, 174, 100, textures["button3"]);
 }
 
 Menu::~Menu()
 {
 	//delete buttons;
-	for(map<string, Button*>::iterator i = buttons.begin();
+	for (map<string, Button*>::iterator i = buttons.begin();
 				i != buttons.end(); ++i)
 		{
 			delete i->second;
 			i->second = nullptr;
 		}
 
-	for(map<string, SDL_Texture*>::iterator i = textures.begin();
+	for (map<string, SDL_Texture*>::iterator i = textures.begin();
 				i != textures.end(); ++i)
 	{
 		SDL_DestroyTexture(i->second);
@@ -48,7 +48,7 @@ Menu::~Menu()
 
 void Menu::draw_menu()
 {
-	for(map<string, Button*>::iterator i = buttons.begin();
+	for (map<string, Button*>::iterator i = buttons.begin();
 					i != buttons.end(); ++i)
 	{
 		i->second->render_copy(renderer);
@@ -72,20 +72,19 @@ void Menu::handle_inputs()
 			running = false;
 			gamestate = "play_state";
 		}
-
 	}
 }
-
 
 string Menu::run()
 {
 	running = true;
 	gamestate = "none";
+
 	const Uint32 targetFrameDelay = 10;
 	Uint32 startTime = SDL_GetTicks();
 	Uint32 lastFrameTime = startTime;
 
-	while(running)
+	while (running)
 	{
 		Uint32 frameDelay = SDL_GetTicks() - lastFrameTime;
 		lastFrameTime += frameDelay;
@@ -109,6 +108,7 @@ string Menu::run()
 			SDL_Delay(sleepTime);
 		}
 	}
+
 	return gamestate;
 }
 

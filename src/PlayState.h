@@ -18,26 +18,25 @@ public:
 	~Play_State();
 
 	std::string run();
-	void run_game_loop();
-	void clear_play_state();
-
-
-	void handle_inputs();
 
 private:
-	int score;
+	int current_time;
 
 	bool running;
 
 	Level* level;
 	int current_level;
 
-
 	bool space_down;
 	double diff_x;
 	double diff_y;
 	int angle_wait;
-	bool pause;
+	int shot_fired;
+	int shot_hit;
+
+	void run_game_loop();
+	void clear_play_state();
+	void handle_inputs();
 };
 
 #endif /* SRC_PLAYSTATE_H_ */

@@ -14,17 +14,15 @@
 #include <cmath>
 #include <map>
 
-const int SCREEN_WIDTH = 1200;
-const int SCREEN_HEIGHT = 800;
-
 const double PI = 3.14159265;
 
 class Sprite : public Image
 {
 public:
 	virtual ~Sprite() = 0;
-	Sprite(double x, double y, int width, int height,
-			double angle, SDL_Texture*& texture);
+	Sprite(const double& x, const double& y, const int& width,
+			const int& height, const double& angle,
+			SDL_Texture*& texture);
 
 	double get_angle() const;
 
@@ -42,17 +40,14 @@ public:
 	virtual bool intersect(Sprite*&) const;
 	virtual void render_copy(SDL_Renderer*& renderer);
 
-	void set_angle(double new_angle);
-	void set_position(double x, double y);
+	void set_angle(const double& new_angle);
+	void set_position(const double& x, const double& y);
 
-	void increase_width(int increase);
-	void increase_height(int increase);
-
-
+	void increase_width(const int& increase);
+	void increase_height(const int& increase);
 
 protected:
 	double angle;
-	bool short_side;
 };
 
 #endif /* SRC_SPRITE_H_ */

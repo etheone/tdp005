@@ -24,10 +24,7 @@ int main(int argc, char* argv[])
 		{
 			state = game.run();
 		}
-
-		cout << state << endl;
 	}
-
 
 	return 0;
 }

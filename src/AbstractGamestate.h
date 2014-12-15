@@ -16,13 +16,8 @@ class Abstract_Gamestate
 {
 public:
 	Abstract_Gamestate(SDL_Renderer*& renderer,
-			std::string gamestate);
+			const std::string& gamestate);
 	virtual ~Abstract_Gamestate()=0;
-
-	std::string get_state() const;
-	void set_gamestate(std::string str);
-
-
 
 	virtual std::string run() = 0;
 

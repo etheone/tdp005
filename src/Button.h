@@ -13,12 +13,12 @@
 class Button : public Image
 {
 public:
-	Button(double x, double y,
-		   int w, int h,
+	Button(const double& x, const double& y,
+		   const int& w, const int& h,
 		   SDL_Texture*& texture);
 	~Button();
 
-	bool in_button_area(int x, int y);
+	bool in_button_area(const int& x, const int& y);
 
 };
 

@@ -20,7 +20,6 @@ public:
 
 	std::string run();
 
-
 private:
 	void handle_inputs();
 	void draw_menu();

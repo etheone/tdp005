@@ -18,15 +18,15 @@ class Game_Screen
 public:
 	Game_Screen(const int& screen_width, const int& screen_height);
 	virtual ~Game_Screen();
+
 	SDL_Renderer*& get_renderer();
 
 private:
-
 	const int screen_width;
 	const int screen_height;
+
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-
 };
 
 #endif /* SRC_GAMESCREEN_H_ */

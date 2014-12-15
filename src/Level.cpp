@@ -7,21 +7,19 @@
 
 #include "Level.h"
 
-
 using namespace std;
 
-Level::Level(SDL_Renderer*& renderer)
-:player{nullptr}, level_score{0}, temp_score{nullptr},
- renderer{renderer}, back({0, 0, 1200, 800})
+Level::Level(SDL_Renderer*& renderer, const int& level_time)
+:  player{nullptr}, level_time{level_time},
+   shot_hit{0}, temp_score{nullptr},
+ renderer{renderer}, back({0, 50, 1200, 800})
 {
-	font = TTF_OpenFont("FreeSans.ttf", 16);
+	font = TTF_OpenFont("FreeSans.ttf", 20);
 	if(font == nullptr)
 	{
-		cout << "FUUUUCK";
+		cerr << "OpenFont error" << endl;
 	}
     textColor = { 255, 255, 255, 0 };
-
-
 
 	SDL_Surface* temp = IMG_Load("textures/20x20_wall.png");
 	textures["wall"] = SDL_CreateTextureFromSurface(renderer,temp);
@@ -59,17 +57,15 @@ Level::Level(SDL_Renderer*& renderer)
 	textures["background"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
-
-	level_items.push_back(new Wall(0, 0, 1200, 15, textures["outer_x"]));
-	level_items.push_back(new Wall(0, SCREEN_HEIGHT-15, 1200, 15, textures["outer_x"]));
-	level_items.push_back(new Wall(SCREEN_WIDTH-15, 0, 15, 800, textures["outer_y"]));
-	level_items.push_back(new Wall(0, 0, 15, 800, textures["outer_y"]));
+	level_items.push_back(new Wall(0, 50, 1200, 20, textures["outer_x"]));
+	level_items.push_back(new Wall(0, SCREEN_HEIGHT-20, 1200, 20, textures["outer_x"]));
+	level_items.push_back(new Wall(SCREEN_WIDTH-20, 50, 20, 850, textures["outer_y"]));
+	level_items.push_back(new Wall(0, 50, 20, 850, textures["outer_y"]));
 }
 
 Level::~Level()
 {
 	clear_level();
-
 }
 
 void Level::clear_level()
@@ -77,47 +73,47 @@ void Level::clear_level()
 	delete player;
 		player = nullptr;
 
-		for(Enemy*& e : enemies)
+		for (Enemy*& e : enemies)
 			{
 				delete e;
 				e = nullptr;
 			}
 
-		for(Shot*& s : shots)
+		for (Shot*& s : shots)
 		{
 			delete s;
 			s = nullptr;
 		}
 
-		for(Animation*& a : animations)
+		for (Animation*& a : animations)
 		{
 			delete a;
 			a = nullptr;
 		}
 
-		for(map<string, SDL_Texture*>::iterator i = textures.begin();
+		for (map<string, SDL_Texture*>::iterator i = textures.begin();
 				i != textures.end(); ++i)
 		{
 			SDL_DestroyTexture(i->second);
 		}
 
-		for(Sprite*& l : level_items)
+		for (Sprite*& l : level_items)
 		{
 			delete l;
 			l = nullptr;
 		}
 
 		 // Close the font that was used
-			TTF_CloseFont( font );
+		TTF_CloseFont( font );
 }
 
-bool Level::combine_y_walls(int x , int y)
+bool Level::combine_y_walls(const int& x, const int& y)
 {
 	for (Sprite*& wall : level_items)
 	{
-		if ( wall->get_left_x() == x &&
-			 wall->get_half_width()*2 == 20 &&
-			 wall->get_bottom_y() == y )
+		if (wall->get_left_x() == x &&
+			wall->get_half_width()*2 == 20 &&
+			wall->get_bottom_y() == y)
 		{
 			wall->increase_height(20);
 			return true;
@@ -126,20 +122,19 @@ bool Level::combine_y_walls(int x , int y)
 	return false;
 }
 
-void Level::load_level(int level)
+void Level::load_level(const int& level)
 {
 	// Loads a level from a file.
+	// If there are severals wall objects next to each other, they are combined
+	// into a single larger wall to reduce the amount of wall objects in play
 
 	string level_str = "levels/level" + to_string(level )+ ".txt";
 	ifstream file(level_str);
 	string line{""};
 
-	// The awesome and epic purpose of this int is to make several walls in a line
-	// merge into one single wall to prevent the occasional bouncing bug and reduce
-	// the amount of collision checks at the same time... Genius
 	int last_wall_left{-1};
 
-	for(int line_number{1}; line_number < 40; ++line_number)
+	for (int line_number{3}; line_number < 44; ++line_number)
 	{
 		last_wall_left = -1;
 		getline(file, line);
@@ -147,29 +142,34 @@ void Level::load_level(int level)
 		{
 			if (line[i] == '#')
 			{
-				if(last_wall_left == i-1)
+				if (last_wall_left == i-1)
 				{
 					level_items.back()->increase_width(20);
 					last_wall_left = i;
 				}
-				else if(!combine_y_walls(i*20, line_number*20))
+
+				else if (!combine_y_walls(i*20, line_number*20))
 				{
-					level_items.push_back(new Wall(i*20, line_number*20, 20, 20, textures["wall"]));
+					level_items.push_back(new Wall(i*20, line_number*20,
+										  20, 20, textures["wall"]));
 					last_wall_left = i;
 				}
 			}
 
 			if (line[i] == 'p')
 			{
-				player = new Player(i*20 ,line_number*20 ,40, 40, 180, textures["player"], 1);
+				player = new Player(i*20 ,line_number*20, 40,
+									40, 180, textures["player"], 1);
 			}
 
 			if (line[i] == 'e')
 			{
-				enemies.push_back(new Enemy(i*20, line_number*20, 60, 60, 270, textures["enemy"], 5));
+				enemies.push_back(new Enemy(i*20, line_number*20,
+								  60, 60, 270, textures["enemy"], 5));
 			}
 		}
 	}
+
 	file.close();
 }
 
@@ -178,17 +178,16 @@ bool Level::no_enemies()
 	return enemies.empty();
 }
 
-
 void Level::draw_score()
 {
-	std::string score_text = string("score: ") + string("10");
+	std::string score_text = string("Time until shit happens: ") + to_string(level_time);
 
 	SDL_Surface* textSurface = TTF_RenderText_Solid(font, score_text.c_str(), textColor);
 	temp_score = SDL_CreateTextureFromSurface(renderer, textSurface);
 	int text_width = textSurface->w;
 	int text_height = textSurface->h;
 	SDL_FreeSurface(textSurface);
-	renderQuad = { 200, 200 , text_width, text_height};
+	renderQuad = { 420, 14 , text_width, text_height};
 
 	SDL_RenderCopy(renderer, temp_score, nullptr, &renderQuad);
 	SDL_DestroyTexture(temp_score);
@@ -215,6 +214,7 @@ void Level::draw_level()
 	{
 		shot->render_copy(renderer);
 	}
+
 	for (vector<Animation*>::iterator it{animations.begin()};
 			it != animations.end();
 			++it)
@@ -231,14 +231,20 @@ void Level::draw_level()
 			break;
 		}
 	}
+
 	draw_score();
+}
+
+void Level::update_time()
+{
+	--level_time;
 }
 
 void Level::update_enemy()
 {
-	for(vector<Enemy*>::iterator it{enemies.begin()}; it != enemies.end(); ++it)
+	for (vector<Enemy*>::iterator it{enemies.begin()}; it != enemies.end(); ++it)
 	{
-		if((*it)->get_health() <= 0)
+		if ((*it)->get_health() <= 0)
 		{
 			animations.push_back(new Animation(textures["ship_explosion"],
 											(*it)->get_middle_x(),
@@ -250,7 +256,7 @@ void Level::update_enemy()
 			break;
 		}
 
-		if((*it)->get_counter() == 40)
+		if ((*it)->get_counter() == 40)
 		{
 			add_to_shots((*it)->get_middle_x(),
 						 (*it)->get_middle_y(),
@@ -259,6 +265,7 @@ void Level::update_enemy()
 						 5, 3, false);
 			simulate_shot_path();
 		}
+
 		(*it)->update(level_items);
 	}
 }
@@ -281,10 +288,10 @@ void Level::update_shots()
 		else
 		{
 			Sprite* temp;
-			for(Enemy* enemy : enemies)
+			for (Enemy* enemy : enemies)
 			{
 				temp = dynamic_cast<Sprite*>(enemy);
-				if((*it)->is_player_shot() && (*it)->intersect(temp))
+				if ((*it)->is_player_shot() && (*it)->intersect(temp))
 				{
 					animations.push_back(new Animation(textures["shot_animation"],
 													(*it)->get_left_x(),
@@ -295,6 +302,7 @@ void Level::update_shots()
 					delete *it;
 					shots.erase(it);
 					return;
+					++shot_hit;
 				}
 			}
 			temp = nullptr;
@@ -304,29 +312,34 @@ void Level::update_shots()
 	}
 }
 
-void Level::add_to_shots(double x, double y, int w, int h,
-				         double angle, int speed, int b,
-						 bool player_shot, string text)
+void Level::add_to_shots(const double& x, const double& y, const int& w, const int& h,
+				         const double& angle, const int& speed, const int& b,
+						 const bool& player_shot, string text)
 {
 	shots.push_back(new Shot(x, y, w, h, angle,
 							 textures[text],
 							 speed, b, player_shot));
 }
 
+int Level::get_time() const
+{
+	return level_time;
+}
+
 void Level::enemy_collision_handler()
 {
 	Sprite* e{nullptr};
 
-	for(Enemy*& enemy : enemies)
+	for (Enemy*& enemy : enemies)
 	{
 		e = dynamic_cast<Sprite*>(enemy);
-		if(player->intersect(e))
+		if (player->intersect(e))
 		{
 		player->set_visible(false);
 		player->decrease_health();
-
 		}
 	}
+
 	e = nullptr;
 }
 
@@ -340,9 +353,9 @@ void Level::player_collision_handler()
 {
 	Sprite* p = dynamic_cast<Sprite*>(player);
 
-	for(Sprite*& s : level_items)
+	for (Sprite*& s : level_items)
 	{
-		if(s->intersect(p))
+		if (s->intersect(p))
 		{
 			cout << "you crashed" << endl;
 			player->decrease_health();
@@ -352,15 +365,13 @@ void Level::player_collision_handler()
 														480, 60,
 														8, 20));
 			player->set_visible(false);
-
-
 		}
 	}
-	for(Shot*& s : shots)
+
+	for (Shot*& s : shots)
 	{
-		if(s->intersect(p) && s->get_harmless_time() > 20)
+		if (s->intersect(p) && s->get_harmless_time() > 40)
 		{
-			cout << "you ded" << endl;
 			player->decrease_health();
 			animations.push_back(new Animation(textures["ship_explosion"],
 																	player->get_middle_x(),
@@ -370,9 +381,9 @@ void Level::player_collision_handler()
 			player->set_visible(false);
 		}
 	}
+
 	p = nullptr;
 }
-
 
 void Level::simulate_shot_path()
 {
@@ -396,8 +407,10 @@ void Level::simulate_shot_path()
 						shot->get_angle());
 			}
 		}
+
 		shot->update_pos_simulation();
 	}
+
 	shot->set_position(temp_x, temp_y);
 	shot->set_angle(temp_angle);
 	shot->set_bounce_count(temp_bounce_count);

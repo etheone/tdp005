@@ -7,7 +7,8 @@
 
 #include "Image.h"
 
-Image::Image(double x, double y, int width, int height, SDL_Texture*& texture)
+Image::Image(const double& x, const double& y, const int& width,
+			 const int& height, SDL_Texture*& texture)
 : image{texture}, rectangle({int(round(x)), int(round(y)), width, height}),
   exact_x{x}, exact_y{y}, visible{true}
 {
@@ -23,9 +24,9 @@ Image::~Image()
 
 void Image::render_copy(SDL_Renderer*& renderer)
 {
-	if(visible)
+	if (visible)
 	{
-	SDL_RenderCopy(renderer, image, nullptr, &rectangle);
+		SDL_RenderCopy(renderer, image, nullptr, &rectangle);
 	}
 }
 
@@ -34,7 +35,7 @@ void Image::logSDLError(std::ostream &os, const std::string &msg)
 	os << msg << " error: " << SDL_GetError() << std::endl;
 }
 
-void Image::set_visible(bool v)
+void Image::set_visible(const bool& v)
 {
 	visible = v;
 }

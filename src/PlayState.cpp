@@ -10,16 +10,15 @@
 using namespace std;
 
 Play_State::Play_State(SDL_Renderer*& renderer) :
-		Abstract_Gamestate(renderer, "play_state"), score{0}, running{true},
+		Abstract_Gamestate(renderer, "play_state"), current_time{1000}, running{true},
 		level{nullptr}, current_level{1}, space_down{false},
-		diff_x{0}, diff_y{0}, angle_wait{0}, pause{false}
+		diff_x{0}, diff_y{0}, angle_wait{0}, shot_fired{0}, shot_hit{0}
 {
 }
 
 Play_State::~Play_State()
 {
 	clear_play_state();
-
 }
 
 void Play_State::clear_play_state()
@@ -28,13 +27,11 @@ void Play_State::clear_play_state()
 	level = nullptr;
 }
 
-
 double calculate_angle(double diff_x, double diff_y)
 {
 	const double rad_to_degree{180.0000 / 3.1416};
 	return atan2 (diff_y, diff_x) * rad_to_degree;
 }
-
 
 void Play_State::handle_inputs()
 {
@@ -47,7 +44,7 @@ void Play_State::handle_inputs()
 		{
 			running = false;
 		}
-		else if(gamestate == "play_state")
+		else if (gamestate == "play_state")
 		{
 			if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_SPACE))
 			{
@@ -62,7 +59,7 @@ void Play_State::handle_inputs()
 				diff_x += (event.motion.x - level->player->get_middle_x());
 				diff_y += (event.motion.y - level->player->get_middle_y());
 				++angle_wait;
-				if(angle_wait >= 8 && !space_down)
+				if (angle_wait >= 8 && !space_down)
 				{
 					level->player->set_angle(calculate_angle(diff_x, diff_y) + 90);
 					angle_wait = 0;
@@ -72,7 +69,6 @@ void Play_State::handle_inputs()
 				level->player->set_position(
 						event.motion.x - level->player->get_half_width(),
 						event.motion.y - level->player->get_half_height());
-
 			}
 			else if (event.type == SDL_MOUSEBUTTONDOWN)
 			{
@@ -82,6 +78,7 @@ void Play_State::handle_inputs()
 									level->player->get_angle(),
 									5, 3, true);
 				level->simulate_shot_path();
+				++shot_fired;
 			}
 		}
 	}
@@ -89,8 +86,7 @@ void Play_State::handle_inputs()
 
 void Play_State::run_game_loop()
 {
-	//bool level_complete{false};
-	//bool game_over{false};
+	int time_count{0};
 	const Uint32 targetFrameDelay = 10;
 	Uint32 startTime = SDL_GetTicks();
 	Uint32 lastFrameTime = startTime;
@@ -101,37 +97,37 @@ void Play_State::run_game_loop()
 		lastFrameTime += frameDelay;
 
 		handle_inputs();
-		if(level->player->get_health() <= 0)
+		if (level->player->get_health() <= 0)
 		{
-			//game_over = true;
-			gamestate = "menu";
+			gamestate = "fail";
 			SDL_SetRelativeMouseMode(SDL_FALSE);
 		}
-		else if(level->no_enemies())
+		else if (level->no_enemies())
 		{
-			// level_complete = true;
 			gamestate = "next_level";
 			SDL_SetRelativeMouseMode(SDL_FALSE);
 		}
 		else
 		{
+			++time_count;
 			level->update_enemy();
 			level->enemy_collision_handler();
 			level->player_collision_handler();
+			if(time_count % 10 == 0)
+			{
+				level->update_time();
+			}
 
-			if(!level->shots_empty())
+			if (!level->shots_empty())
 			{
 				level->update_shots();
 			}
 		}
 
-		//SDL_SetRelativeMouseMode(SDL_TRUE);
-		//SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 
 		level->draw_level();
 
-		//show the newly drawn things
 		SDL_RenderPresent(renderer);
 
 		// wait before drawing the next frame
@@ -156,17 +152,25 @@ string Play_State::run()
 	{
 		current_level = 1;
 	}
-	level = new Level(renderer);
+
+	level = new Level(renderer, current_time);
 	level->load_level(current_level);
 	run_game_loop();
-	clear_play_state();
 
-	if(gamestate == "next_level")
+	if (gamestate == "fail")
 	{
-		++current_level;
+		current_level = 1;
+		current_time = 1000;
 		gamestate = "menu";
 	}
-	cout << current_level << gamestate << endl;
+	else if (gamestate == "next_level")
+	{
+		++current_level;
+		current_time = level->get_time();
+		gamestate = "menu";
+	}
+
+	clear_play_state();
 
 	return gamestate;
 }

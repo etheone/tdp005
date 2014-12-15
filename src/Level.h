@@ -24,31 +24,36 @@
 class Level
 {
 public:
-	Level(SDL_Renderer*& renderer);
+	Level(SDL_Renderer*& renderer, const int& level_time);
 	virtual ~Level();
-	void load_level(int level);
+	void load_level(const int& level);
 	void draw_level();
-
 
 	void simulate_shot_path();
 	void update_shots();
 	void update_enemy();
+	void update_time();
 
 	void player_collision_handler();
 
-	void add_to_shots(double x, double y, int w, int h,
-					  double angle, int speed, int b,
-					  bool player_shot, std::string = "shot");
+	void add_to_shots(const double& x, const double& y, const int& w,
+					  const int& h, const double& angle, const int& speed,
+					  const int& b, const bool& player_shot, std::string = "shot");
 	void enemy_collision_handler();
 	void clear_level();
 
 	bool shots_empty();
 	bool no_enemies();
 
+	int get_time() const;
+
+
 	Player* player;
 
 private:
-	int level_score;
+	int level_time;
+	int shot_hit;
+
 
 	std::map<std::string, SDL_Texture*> textures;
 	std::vector<Sprite*> level_items;
@@ -61,14 +66,12 @@ private:
 	SDL_Color textColor;
 	SDL_Rect renderQuad;
 
-
 	SDL_Renderer*& renderer;
 	SDL_Rect back;
 
 	void draw_score();
 
-	bool combine_y_walls(int x , int y);
-
+	bool combine_y_walls(const int& x, const int& y);
 };
 
 #endif /* SRC_LEVEL_H_ */
