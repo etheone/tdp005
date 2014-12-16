@@ -10,7 +10,7 @@
 using namespace std;
 
 Menu::Menu(SDL_Renderer*& renderer)
-: Abstract_Gamestate(renderer, "menu"), running{true}
+: Abstract_Gamestate(renderer, "menu")
 {
 	SDL_Surface* temp = IMG_Load("textures/start_button.png");
 	textures["button1"] = SDL_CreateTextureFromSurface(renderer, temp);

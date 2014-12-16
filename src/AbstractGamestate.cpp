@@ -11,7 +11,7 @@ using namespace std;
 
 Abstract_Gamestate::Abstract_Gamestate(SDL_Renderer*& renderer,
 									   const string& gamestate)
-	: renderer{renderer}, gamestate{gamestate}
+	: running{true}, renderer{renderer}, gamestate{gamestate}
 {
 }
 

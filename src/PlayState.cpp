@@ -9,9 +9,10 @@
 
 using namespace std;
 
-Play_State::Play_State(SDL_Renderer*& renderer) :
-		Abstract_Gamestate(renderer, "play_state"), current_time{1000}, running{true},
-		level{nullptr}, current_level{1}, space_down{false},
+Play_State::Play_State(SDL_Renderer*& renderer, Highscore_Menu*& highscore) :
+		Abstract_Gamestate(renderer, "play_state"), current_time{1000},
+		level{nullptr}, highscore{highscore},
+		current_level{1}, space_down{false},
 		diff_x{0}, diff_y{0}, angle_wait{0}, shot_fired{0}, shot_hit{0}
 {
 }
@@ -148,27 +149,31 @@ string Play_State::run()
 	gamestate = "play_state";
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 
-	if (current_level == 4)
-	{
-		current_level = 1;
-	}
-
-	level = new Level(renderer, current_time);
+	level = new Level(renderer, current_time, shot_hit);
 	level->load_level(current_level);
 	run_game_loop();
 
+	cout << shot_fired << " " << shot_hit << " " << gamestate << current_time <<  endl;
 	if (gamestate == "fail")
 	{
 		current_level = 1;
 		current_time = 1000;
+		shot_fired = 0;
+		shot_hit = 0;
+		gamestate = "menu";
+	}
+	else if (current_level == 3)
+	{
+		highscore->add_score(current_time, double(shot_hit) / double(shot_fired));
 		gamestate = "menu";
 	}
 	else if (gamestate == "next_level")
 	{
 		++current_level;
-		current_time = level->get_time();
 		gamestate = "menu";
 	}
+
+
 
 	clear_play_state();
 

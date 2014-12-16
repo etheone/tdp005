@@ -11,7 +11,7 @@ all: Starcrossed
 
 Starcrossed: main.o PlayState.o wall.o Level.o Button.o \
 Menu.o Sprite.o Shot.o Enemy.o Player.o AbstractGamestate.o\
-GameScreen.o Animation.o Image.o
+GameScreen.o Animation.o Image.o HighscoreMenu.o
 	$(CC) *.o  $(LFLAGS) -o Starcrossed
 
 main.o: $(SRC_DIR)/main.cc
@@ -55,6 +55,9 @@ Menu.o: $(SRC_DIR)/Menu.cpp $(SRC_DIR)/Menu.h
 	
 Button.o: $(SRC_DIR)/Button.cpp $(SRC_DIR)/Button.h
 	$(CC) $(CFLAGS) $(SRC_DIR)/Button.cpp
+	
+HighscoreMenu.o: $(SRC_DIR)/HighscoreMenu.cpp $(SRC_DIR)/HighscoreMenu.h
+	$(CC) $(CFLAGS) $(SRC_DIR)/HighscoreMenu.cpp
 
 clean:
 	rm -rf *.o Starcrossed

@@ -24,7 +24,7 @@
 class Level
 {
 public:
-	Level(SDL_Renderer*& renderer, const int& level_time);
+	Level(SDL_Renderer*& renderer, int& level_time, int& shot_hit);
 	virtual ~Level();
 	void load_level(const int& level);
 	void draw_level();
@@ -51,8 +51,8 @@ public:
 	Player* player;
 
 private:
-	int level_time;
-	int shot_hit;
+	int& level_time;
+	int& shot_hit;
 
 
 	std::map<std::string, SDL_Texture*> textures;

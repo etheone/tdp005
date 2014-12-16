@@ -24,8 +24,6 @@ private:
 	void handle_inputs();
 	void draw_menu();
 
-	bool running;
-
 	std::map<std::string, SDL_Texture*> textures;
 	std::map<std::string, Button*> buttons;
 };

@@ -10,11 +10,12 @@
 
 #include "AbstractGamestate.h"
 #include "Level.h"
+#include "HighscoreMenu.h"
 
 class Play_State : public Abstract_Gamestate
 {
 public:
-	Play_State(SDL_Renderer*& renderer);
+	Play_State(SDL_Renderer*& renderer, Highscore_Menu*& highscore);
 	~Play_State();
 
 	std::string run();
@@ -22,9 +23,8 @@ public:
 private:
 	int current_time;
 
-	bool running;
-
 	Level* level;
+	Highscore_Menu*& highscore;
 	int current_level;
 
 	bool space_down;
@@ -33,6 +33,7 @@ private:
 	int angle_wait;
 	int shot_fired;
 	int shot_hit;
+
 
 	void run_game_loop();
 	void clear_play_state();

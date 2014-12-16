@@ -9,9 +9,9 @@
 
 using namespace std;
 
-Level::Level(SDL_Renderer*& renderer, const int& level_time)
+Level::Level(SDL_Renderer*& renderer, int& level_time, int& shot_hit)
 :  player{nullptr}, level_time{level_time},
-   shot_hit{0}, temp_score{nullptr},
+   shot_hit{shot_hit}, temp_score{nullptr},
  renderer{renderer}, back({0, 50, 1200, 800})
 {
 	font = TTF_OpenFont("FreeSans.ttf", 20);
@@ -128,7 +128,7 @@ void Level::load_level(const int& level)
 	// If there are severals wall objects next to each other, they are combined
 	// into a single larger wall to reduce the amount of wall objects in play
 
-	string level_str = "levels/level" + to_string(level )+ ".txt";
+	string level_str = "levels/level" + to_string(level)+ ".txt";
 	ifstream file(level_str);
 	string line{""};
 
@@ -301,8 +301,8 @@ void Level::update_shots()
 					enemy->decrease_health();
 					delete *it;
 					shots.erase(it);
-					return;
 					++shot_hit;
+					return;
 				}
 			}
 			temp = nullptr;

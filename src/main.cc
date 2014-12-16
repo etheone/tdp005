@@ -2,6 +2,8 @@
 #include "PlayState.h"
 #include "GameScreen.h"
 #include "Menu.h"
+#include "HighscoreMenu.h"
+
 
 
 using namespace std;
@@ -13,12 +15,14 @@ int main(int argc, char* argv[])
 
 	// CLASS INIT
 	Menu menu(g.get_renderer());
-	Play_State game(g.get_renderer());
+	Highscore_Menu* highscore = new Highscore_Menu(g.get_renderer(), "Highscores");
+	Play_State game(g.get_renderer(), highscore);
 	string state{"menu"};
 
 	// MAIN LOOP
 	while(state == "menu")
 	{
+		state = highscore->run();
 		state = menu.run();
 		if (state == "play_state")
 		{
@@ -26,5 +30,6 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	delete highscore;
 	return 0;
 }
