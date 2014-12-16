@@ -25,14 +25,6 @@ Level::Level(SDL_Renderer*& renderer, int& level_time, int& shot_hit)
 	textures["wall"] = SDL_CreateTextureFromSurface(renderer,temp);
 	SDL_FreeSurface(temp);
 
-	temp = IMG_Load("textures/outer_x_wall.png");
-	textures["outer_x"] = SDL_CreateTextureFromSurface(renderer, temp);
-	SDL_FreeSurface(temp);
-
-	temp = IMG_Load("textures/outer_y_wall.png");
-	textures["outer_y"] = SDL_CreateTextureFromSurface(renderer, temp);
-	SDL_FreeSurface(temp);
-
 	temp = IMG_Load("textures/playership.png");
 	textures["player"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
@@ -57,10 +49,10 @@ Level::Level(SDL_Renderer*& renderer, int& level_time, int& shot_hit)
 	textures["background"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
-	level_items.push_back(new Wall(0, 50, 1200, 20, textures["outer_x"]));
-	level_items.push_back(new Wall(0, SCREEN_HEIGHT-20, 1200, 20, textures["outer_x"]));
-	level_items.push_back(new Wall(SCREEN_WIDTH-20, 50, 20, 850, textures["outer_y"]));
-	level_items.push_back(new Wall(0, 50, 20, 850, textures["outer_y"]));
+	level_items.push_back(new Wall(0, 50, 1200, 20, textures["wall"]));
+	level_items.push_back(new Wall(0, SCREEN_HEIGHT-20, 1200, 20, textures["wall"]));
+	level_items.push_back(new Wall(SCREEN_WIDTH-20, 50, 20, 850, textures["wall"]));
+	level_items.push_back(new Wall(0, 50, 20, 850, textures["wall"]));
 }
 
 Level::~Level()

@@ -13,28 +13,18 @@ Highscore_Menu::Highscore_Menu(SDL_Renderer*& renderer, string file)
 :Abstract_Gamestate(renderer, "Highscore"),  highscore_file{file}, temp_score{nullptr}
 
 {
-	font = TTF_OpenFont("FreeSans.ttf", 20);
+	font = TTF_OpenFont("FreeSans.ttf", 36);
 	if(font == nullptr)
 	{
 		cerr << "OpenFont error" << endl;
 	}
     textColor = { 255, 255, 255, 0 };
 
-//	SDL_Surface* temp = IMG_Load("textures/start_button.png");
-//	textures["button1"] = SDL_CreateTextureFromSurface(renderer, temp);
-//	SDL_FreeSurface(temp);
-//
-//	temp = IMG_Load("textures/highscore_button.png");
-//	textures["button2"] = SDL_CreateTextureFromSurface(renderer, temp);
-//	SDL_FreeSurface(temp);
-//
-//	temp = IMG_Load("textures/quit_button.png");
-//	textures["button3"] = SDL_CreateTextureFromSurface(renderer, temp);
-//	SDL_FreeSurface(temp);
-//
-//	buttons["start_game"] = new Button(500, 190, 187, 85, textures["button1"]);
-//	buttons["highscore_button"] = new Button(420, 320, 355, 166, textures["button2"]);
-//	buttons["quit_game"] = new Button(500, 520, 174, 100, textures["button3"]);
+	SDL_Surface* temp = IMG_Load("textures/start_button.png");
+	textures["button1"] = SDL_CreateTextureFromSurface(renderer, temp);
+	SDL_FreeSurface(temp);
+
+	buttons["done"] = new Button(500, 600, 187, 85, textures["button1"]);
 }
 
 Highscore_Menu::~Highscore_Menu()
@@ -53,7 +43,6 @@ Highscore_Menu::~Highscore_Menu()
 		SDL_DestroyTexture(i->second);
 	}
 
-	 // Close the font that was used
 	TTF_CloseFont( font );
 }
 
@@ -73,15 +62,29 @@ void Highscore_Menu::load_temporary_texture(string message, int x, int y)
 
 void Highscore_Menu::draw_score_list()
 {
-	int x{200};
-	int y{200};
+	int x{440};
+	int y{110};
+	int place{1};
 
+	load_temporary_texture("HIGHSCORE", x + 35, y - 70 );
 	for(pair<string, string>& p : scores)
 		{
-			load_temporary_texture(p.first, x, y);
+			load_temporary_texture(to_string(place) + ".", x, y);
+			load_temporary_texture(p.first, x+70, y);
 			load_temporary_texture(p.second, x + 200, y);
-			y += 100;
+			y += 50;
+			++place;
 		}
+	draw_buttons();
+}
+
+void Highscore_Menu::draw_buttons()
+{
+	for (map<string, Button*>::iterator i = buttons.begin();
+						i != buttons.end(); ++i)
+	{
+		i->second->render_copy(renderer);
+	}
 }
 
 void Highscore_Menu::handle_inputs()
@@ -92,13 +95,19 @@ void Highscore_Menu::handle_inputs()
 		if (event.type == SDL_QUIT)
 		{
 			running = false;
+			gamestate = "exit";
+		}
+		else if(event.type == SDL_MOUSEBUTTONDOWN &&
+				buttons["done"]->in_button_area(event.motion.x, event.motion.y))
+		{
+			running = false;
 		}
 	}
 }
 
 void Highscore_Menu::read_from_file()
 {
-	ifstream file(highscore_file.c_str());
+	ifstream file{highscore_file.c_str()};
 	string line{""};
 	string name;
 	string score;
@@ -122,11 +131,106 @@ void Highscore_Menu::read_from_file()
 	file.close();
 }
 
+void Highscore_Menu::overwrite_file()
+{
+	sort(scores.begin(), scores.end(),
+			[](pair<string, string> current, pair<string, string> next )
+			{
+				return current.second > next.second;
+			});
+	if (scores.size() > 9)
+	{
+	    scores.pop_back();
+	}
+
+	ofstream out_file{highscore_file.c_str()};
+	for(pair<string,string> p : scores)
+	{
+		out_file << p.first << " " << p.second << endl;
+	}
+	out_file.close();
+	scores.clear();
+}
+
+
 void Highscore_Menu::add_score(int time, double accuracy)
 {
-	string score = to_string(time * 10 * accuracy);
-	scores.push_back(make_pair("joagy", score));
-	cout << "NU" << endl;
+	string first_letter{"a"};
+	string second_letter{"a"};
+	string third_letter{"a"};
+	string fourth_letter{"a"};
+	string fifth_letter{"a"};
+
+	int current_char{0};
+	bool done{false};
+
+	std::string score = to_string(int(time * 10 * accuracy));
+
+	SDL_Event event;
+	while(!done)
+	{
+		char keypress;
+		while( SDL_PollEvent( &event ) != 0)
+		{
+			if(event.type == SDL_QUIT)
+			{
+				return;
+			}
+			else if(event.type == SDL_MOUSEBUTTONDOWN &&
+					buttons["done"]->in_button_area(event.motion.x, event.motion.y))
+			{
+				done = true;
+			}
+
+			else if(event.type == SDL_KEYDOWN)
+			{
+				SDL_RenderClear(renderer);
+
+				keypress = (char)event.key.keysym.sym;
+				if(isdigit(keypress) || isalpha(keypress))
+				{
+					++current_char;
+					switch(current_char)
+					{
+						case 1 :
+							first_letter = keypress;
+							break;
+						case 2 :
+							second_letter = keypress;
+							break;
+						case 3 :
+							third_letter = keypress;
+							break;
+						case 4 :
+							fourth_letter = keypress;
+							break;
+						case 5 :
+							fifth_letter = keypress;
+							current_char = 0;
+							break;
+					}
+				}
+			}
+		}
+		draw_buttons();
+		load_temporary_texture(first_letter, 520, 200);
+		load_temporary_texture(second_letter, 545, 200);
+		load_temporary_texture(third_letter, 570, 200);
+		load_temporary_texture(fourth_letter, 595, 200);
+		load_temporary_texture(fifth_letter, 620, 200);
+
+		SDL_RenderPresent(renderer);
+		SDL_Delay(100);
+	}
+
+	read_from_file();
+	string name{first_letter +
+				second_letter +
+				third_letter +
+				fourth_letter +
+				fifth_letter};
+	scores.push_back(make_pair(name, score));
+	overwrite_file();
 }
 
 
@@ -135,15 +239,10 @@ string Highscore_Menu::run()
 	running = true;
 	gamestate = "menu";
 
-	const Uint32 targetFrameDelay = 10;
-	Uint32 startTime = SDL_GetTicks();
-	Uint32 lastFrameTime = startTime;
 	read_from_file();
 
 	while (running)
 	{
-		Uint32 frameDelay = SDL_GetTicks() - lastFrameTime;
-		lastFrameTime += frameDelay;
 
 		SDL_SetRelativeMouseMode(SDL_FALSE);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -155,16 +254,9 @@ string Highscore_Menu::run()
 		//show the newly drawn things
 		SDL_RenderPresent(renderer);
 
-		// wait before drawing the next frame
-		frameDelay = SDL_GetTicks() - lastFrameTime;
-		if (targetFrameDelay > frameDelay)
-		{
-			// only wait if it's actually needed
-			Uint32 sleepTime = targetFrameDelay - frameDelay;
-			SDL_Delay(sleepTime);
-		}
+		SDL_Delay(10);
 	}
-//	scores.clear();
+	scores.clear();
 
 	return gamestate;
 }

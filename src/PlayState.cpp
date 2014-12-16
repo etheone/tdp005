@@ -162,8 +162,10 @@ string Play_State::run()
 		shot_hit = 0;
 		gamestate = "menu";
 	}
-	else if (current_level == 3)
+	else if (current_level == 1)
 	{
+		SDL_RenderClear(renderer);
+		cout << "done" << endl;
 		highscore->add_score(current_time, double(shot_hit) / double(shot_fired));
 		gamestate = "menu";
 	}
@@ -172,8 +174,6 @@ string Play_State::run()
 		++current_level;
 		gamestate = "menu";
 	}
-
-
 
 	clear_play_state();
 
