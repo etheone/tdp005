@@ -10,16 +10,9 @@
 using namespace std;
 
 Highscore_Menu::Highscore_Menu(SDL_Renderer*& renderer, string file)
-:Abstract_Gamestate(renderer, "Highscore"),  highscore_file{file}, temp_score{nullptr}
+:Abstract_Gamestate(renderer, "Highscore"),  highscore_file{file}
 
 {
-	font = TTF_OpenFont("FreeSans.ttf", 36);
-	if(font == nullptr)
-	{
-		cerr << "OpenFont error" << endl;
-	}
-    textColor = { 255, 255, 255, 0 };
-
 	SDL_Surface* temp = IMG_Load("textures/start_button.png");
 	textures["button1"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
@@ -46,20 +39,6 @@ Highscore_Menu::~Highscore_Menu()
 	TTF_CloseFont( font );
 }
 
-void Highscore_Menu::load_temporary_texture(string message, int x, int y)
-{
-	SDL_Surface* textSurface = TTF_RenderText_Solid(font, message.c_str(), textColor);
-	temp_score = SDL_CreateTextureFromSurface(renderer, textSurface);
-	int text_width = textSurface->w;
-	int text_height = textSurface->h;
-	SDL_FreeSurface(textSurface);
-	renderQuad = { x,  y, text_width, text_height};
-
-	SDL_RenderCopy(renderer, temp_score, nullptr, &renderQuad);
-	SDL_DestroyTexture(temp_score);
-	temp_score = nullptr;
-}
-
 void Highscore_Menu::draw_score_list()
 {
 	int x{440};
@@ -67,7 +46,7 @@ void Highscore_Menu::draw_score_list()
 	int place{1};
 
 	load_temporary_texture("HIGHSCORE", x + 35, y - 70 );
-	for(pair<string, string>& p : scores)
+	for (pair<string, string>& p : scores)
 		{
 			load_temporary_texture(to_string(place) + ".", x, y);
 			load_temporary_texture(p.first, x+70, y);
@@ -97,7 +76,7 @@ void Highscore_Menu::handle_inputs()
 			running = false;
 			gamestate = "exit";
 		}
-		else if(event.type == SDL_MOUSEBUTTONDOWN &&
+		else if (event.type == SDL_MOUSEBUTTONDOWN &&
 				buttons["done"]->in_button_area(event.motion.x, event.motion.y))
 		{
 			running = false;
@@ -117,7 +96,7 @@ void Highscore_Menu::read_from_file()
 		istringstream iss(line);
 		iss >> name >> score;
 
-	    if(iss.fail())
+	    if (iss.fail())
 	    {
 	      iss.clear();
 	      iss.ignore(4711, '\n');
@@ -136,7 +115,7 @@ void Highscore_Menu::overwrite_file()
 	sort(scores.begin(), scores.end(),
 			[](pair<string, string> current, pair<string, string> next )
 			{
-				return current.second > next.second;
+				return stoi(current.second) > stoi(next.second);
 			});
 	if (scores.size() > 9)
 	{
@@ -144,7 +123,7 @@ void Highscore_Menu::overwrite_file()
 	}
 
 	ofstream out_file{highscore_file.c_str()};
-	for(pair<string,string> p : scores)
+	for (pair<string,string> p : scores)
 	{
 		out_file << p.first << " " << p.second << endl;
 	}
@@ -170,27 +149,27 @@ void Highscore_Menu::add_score(int time, double accuracy)
 	while(!done)
 	{
 		char keypress;
-		while( SDL_PollEvent( &event ) != 0)
+		while (SDL_PollEvent( &event ) != 0)
 		{
-			if(event.type == SDL_QUIT)
+			if (event.type == SDL_QUIT)
 			{
 				return;
 			}
-			else if(event.type == SDL_MOUSEBUTTONDOWN &&
+			else if (event.type == SDL_MOUSEBUTTONDOWN &&
 					buttons["done"]->in_button_area(event.motion.x, event.motion.y))
 			{
 				done = true;
 			}
 
-			else if(event.type == SDL_KEYDOWN)
+			else if (event.type == SDL_KEYDOWN)
 			{
 				SDL_RenderClear(renderer);
 
 				keypress = (char)event.key.keysym.sym;
-				if(isdigit(keypress) || isalpha(keypress))
+				if (isdigit(keypress) || isalpha(keypress))
 				{
 					++current_char;
-					switch(current_char)
+					switch (current_char)
 					{
 						case 1 :
 							first_letter = keypress;

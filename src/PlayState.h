@@ -34,6 +34,7 @@ private:
 	int shot_fired;
 	int shot_hit;
 
+	bool player_clicked(int x , int y);
 
 	void run_game_loop();
 	void clear_play_state();

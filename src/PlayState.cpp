@@ -10,16 +10,20 @@
 using namespace std;
 
 Play_State::Play_State(SDL_Renderer*& renderer, Highscore_Menu*& highscore) :
-		Abstract_Gamestate(renderer, "play_state"), current_time{1000},
-		level{nullptr}, highscore{highscore},
-		current_level{1}, space_down{false},
-		diff_x{0}, diff_y{0}, angle_wait{0}, shot_fired{0}, shot_hit{0}
+		Abstract_Gamestate(renderer, "play_state"),
+		current_time{1000},	level{nullptr},
+		highscore{highscore}, current_level{1},
+		space_down{false}, diff_x{0},
+		diff_y{0}, angle_wait{0},
+		shot_fired{0}, shot_hit{0}
 {
 }
 
 Play_State::~Play_State()
 {
 	clear_play_state();
+	TTF_CloseFont( font );
+
 }
 
 void Play_State::clear_play_state()
@@ -34,21 +38,46 @@ double calculate_angle(double diff_x, double diff_y)
 	return atan2 (diff_y, diff_x) * rad_to_degree;
 }
 
+bool Play_State::player_clicked(int x, int y)
+{
+	bool check_x = level->player->get_left_x() < x &&
+				   level->player->get_right_x() > x;
+	bool check_y = level->player->get_top_y() < y &&
+				   level->player->get_bottom_y() > y;
+	return check_x && check_y;
+}
+
 void Play_State::handle_inputs()
 {
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
 	{
-		if (event.type == SDL_QUIT ||
-				((gamestate != "play_state") &&
-				(event.type == SDL_MOUSEBUTTONDOWN)))
+		if (event.type == SDL_QUIT)
 		{
 			running = false;
 			gamestate = "exit";
 		}
+		else if ((gamestate == "fail" || gamestate == "next_level") &&
+				event.type == SDL_MOUSEBUTTONDOWN)
+		{
+			running = false;
+		}
+		else if ((gamestate == "freeze_state") &&
+				(event.type == SDL_MOUSEBUTTONDOWN) &&
+				player_clicked(event.motion.x, event.motion.y))
+		{
+			gamestate = "play_state";
+			SDL_SetRelativeMouseMode(SDL_TRUE);
+
+		}
 		else if (gamestate == "play_state")
 		{
-			if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_SPACE))
+			if(event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_p))
+			{
+				gamestate = "freeze_state";
+				SDL_SetRelativeMouseMode(SDL_FALSE);
+			}
+			else if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_SPACE))
 			{
 				space_down = true;
 			}
@@ -99,6 +128,7 @@ void Play_State::run_game_loop()
 		lastFrameTime += frameDelay;
 
 		handle_inputs();
+
 		if (level->player->get_health() <= 0)
 		{
 			gamestate = "fail";
@@ -109,13 +139,13 @@ void Play_State::run_game_loop()
 			gamestate = "next_level";
 			SDL_SetRelativeMouseMode(SDL_FALSE);
 		}
-		else
+		else if (gamestate == "play_state")
 		{
 			++time_count;
 			level->update_enemy();
 			level->enemy_collision_handler();
 			level->player_collision_handler();
-			if(time_count % 10 == 0)
+			if (time_count % 10 == 0)
 			{
 				level->update_time();
 			}
@@ -129,6 +159,28 @@ void Play_State::run_game_loop()
 		SDL_RenderClear(renderer);
 
 		level->draw_level();
+		load_temporary_texture( "Level " + to_string(current_level), 50, 5);
+		load_temporary_texture( "Count down "+ to_string(current_time), 230, 5);
+		load_temporary_texture( "Shots fired " + to_string(shot_fired), 570, 5);
+		load_temporary_texture( "Shots hit " + to_string(shot_hit), 850, 5);
+		if (gamestate == "freeze_state")
+		{
+			load_temporary_texture( "Click the pretty player-ship and prepare to rage", 230, 400);
+
+		}
+		else if (gamestate != "play_state")
+		{
+			load_temporary_texture( "Click anywhere on screen to continue", 300, 400);
+
+		}
+		if (gamestate == "fail")
+		{
+			load_temporary_texture( "FAIL!", 550, 300);
+		}
+		else if (gamestate == "next_level")
+		{
+			load_temporary_texture( "SUCCESS!", 520, 300);
+		}
 
 		SDL_RenderPresent(renderer);
 
@@ -147,14 +199,13 @@ string Play_State::run()
 {
 	running = true;
 	space_down = false;
-	gamestate = "play_state";
-	SDL_SetRelativeMouseMode(SDL_TRUE);
+	gamestate = "freeze_state";
 
 	level = new Level(renderer, current_time, shot_hit);
 	level->load_level(current_level);
+
 	run_game_loop();
 
-	cout << shot_fired << " " << shot_hit << " " << gamestate << current_time <<  endl;
 	if (gamestate == "fail")
 	{
 		current_level = 1;
@@ -167,13 +218,16 @@ string Play_State::run()
 	{
 		SDL_RenderClear(renderer);
 		highscore->add_score(current_time, double(shot_hit) / double(shot_fired));
-		gamestate = "highscore";
 		current_level = 1;
+		current_time = 1000;
+		shot_fired = 0;
+		shot_hit = 0;
+		gamestate = "highscore";
 	}
 	else if (gamestate == "next_level")
 	{
 		++current_level;
-		gamestate = "menu";
+		gamestate = "play_state";
 	}
 
 	clear_play_state();

@@ -11,16 +11,9 @@ using namespace std;
 
 Level::Level(SDL_Renderer*& renderer, int& level_time, int& shot_hit)
 :  player{nullptr}, level_time{level_time},
-   shot_hit{shot_hit}, temp_score{nullptr},
- renderer{renderer}, back({0, 50, 1200, 800})
+   shot_hit{shot_hit}, renderer{renderer},
+   back({0, 50, 1200, 800})
 {
-	font = TTF_OpenFont("FreeSans.ttf", 20);
-	if(font == nullptr)
-	{
-		cerr << "OpenFont error" << endl;
-	}
-    textColor = { 255, 255, 255, 0 };
-
 	SDL_Surface* temp = IMG_Load("textures/20x20_wall.png");
 	textures["wall"] = SDL_CreateTextureFromSurface(renderer,temp);
 	SDL_FreeSurface(temp);
@@ -31,6 +24,10 @@ Level::Level(SDL_Renderer*& renderer, int& level_time, int& shot_hit)
 
 	temp = IMG_Load("textures/player_shot4x4.png");
 	textures["shot"] = SDL_CreateTextureFromSurface(renderer, temp);
+	SDL_FreeSurface(temp);
+
+	temp = IMG_Load("textures/enemy_shot.png");
+	textures["enemy_shot"] = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 
 	temp = IMG_Load("textures/shotspritesheet.png");
@@ -94,9 +91,6 @@ void Level::clear_level()
 			delete l;
 			l = nullptr;
 		}
-
-		 // Close the font that was used
-		TTF_CloseFont( font );
 }
 
 bool Level::combine_y_walls(const int& x, const int& y)
@@ -170,22 +164,6 @@ bool Level::no_enemies()
 	return enemies.empty();
 }
 
-void Level::draw_score()
-{
-	std::string score_text = string("Time until shit happens: ") + to_string(level_time);
-
-	SDL_Surface* textSurface = TTF_RenderText_Solid(font, score_text.c_str(), textColor);
-	temp_score = SDL_CreateTextureFromSurface(renderer, textSurface);
-	int text_width = textSurface->w;
-	int text_height = textSurface->h;
-	SDL_FreeSurface(textSurface);
-	renderQuad = { 420, 14 , text_width, text_height};
-
-	SDL_RenderCopy(renderer, temp_score, nullptr, &renderQuad);
-	SDL_DestroyTexture(temp_score);
-	temp_score = nullptr;
-}
-
 void Level::draw_level()
 {
 	SDL_RenderCopy(renderer, textures["background"], nullptr, &back);
@@ -223,8 +201,6 @@ void Level::draw_level()
 			break;
 		}
 	}
-
-	draw_score();
 }
 
 void Level::update_time()
@@ -254,7 +230,7 @@ void Level::update_enemy()
 						 (*it)->get_middle_y(),
 						 4, 4,
 						 (*it)->get_angle(),
-						 5, 3, false);
+						 5, 3, false, "enemy_shot");
 			simulate_shot_path();
 		}
 
@@ -264,7 +240,7 @@ void Level::update_enemy()
 
 void Level::update_shots()
 {
-	for(vector<Shot*>::iterator it{shots.begin()}; it != shots.end(); ++it)
+	for (vector<Shot*>::iterator it{shots.begin()}; it != shots.end(); ++it)
 	{
 		if ((*it)->get_bounce_count() < 0 || (*it)->outside_screen())
 		{
@@ -390,7 +366,7 @@ void Level::simulate_shot_path()
 	double temp_angle{shot->get_angle()};
 	int temp_bounce_count{shot->get_bounce_count()};
 
-	while (shot->get_bounce_count() >= 0)
+	while (shot->get_bounce_count() >= 0 && !shot->outside_screen())
 	{
 		for (Sprite*& sprite : level_items)
 		{

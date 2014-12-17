@@ -54,17 +54,11 @@ private:
 	int& level_time;
 	int& shot_hit;
 
-
 	std::map<std::string, SDL_Texture*> textures;
 	std::vector<Sprite*> level_items;
 	std::vector<Shot*> shots;
 	std::vector<Animation*> animations;
 	std::vector<Enemy*> enemies;
-
-	SDL_Texture* temp_score;
-	TTF_Font* font;
-	SDL_Color textColor;
-	SDL_Rect renderQuad;
 
 	SDL_Renderer*& renderer;
 	SDL_Rect back;

@@ -4,8 +4,6 @@
 #include "Menu.h"
 #include "HighscoreMenu.h"
 
-
-
 using namespace std;
 
 int main(int argc, char* argv[])

@@ -12,6 +12,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include "Button.h"
 
 class Abstract_Gamestate
 {
@@ -26,6 +27,14 @@ protected:
 	bool running;
 	SDL_Renderer* renderer;
 	std::string gamestate;
+
+	TTF_Font* font;
+	SDL_Color text_color;
+	SDL_Rect text_rect;
+	SDL_Texture* temp_score;
+
+	void load_temporary_texture(std::string message, int x, int y);
+
 };
 
 #endif /* SRC_ABSTRACTGAMESTATE_H_ */

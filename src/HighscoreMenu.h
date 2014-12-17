@@ -9,7 +9,6 @@
 #define SRC_HIGHSCOREMENU_H_
 
 #include "AbstractGamestate.h"
-#include "Button.h"
 
 #include <map>
 #include <vector>
@@ -31,11 +30,6 @@ public:
 private:
 	std::string highscore_file;
 
-	TTF_Font* font;
-	SDL_Color textColor;
-	SDL_Rect renderQuad;
-	SDL_Texture* temp_score;
-
 	std::vector< std::pair<std::string, std::string> > scores;
 	std::map<std::string, SDL_Texture*> textures;
 	std::map<std::string, Button*> buttons;
@@ -46,8 +40,6 @@ private:
 	void overwrite_file();
 	void draw_score_list();
 	void draw_buttons();
-
-	void load_temporary_texture(std::string message, int x, int y);
 };
 
 #endif /* SRC_HIGHSCOREMENU_H_ */

@@ -44,6 +44,7 @@ Menu::~Menu()
 	{
 		SDL_DestroyTexture(i->second);
 	}
+	TTF_CloseFont(font);
 }
 
 void Menu::draw_menu()
