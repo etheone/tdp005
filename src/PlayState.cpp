@@ -44,6 +44,7 @@ void Play_State::handle_inputs()
 				(event.type == SDL_MOUSEBUTTONDOWN)))
 		{
 			running = false;
+			gamestate = "exit";
 		}
 		else if (gamestate == "play_state")
 		{
@@ -162,12 +163,12 @@ string Play_State::run()
 		shot_hit = 0;
 		gamestate = "menu";
 	}
-	else if (current_level == 1)
+	else if (current_level == 3)
 	{
 		SDL_RenderClear(renderer);
 		cout << "done" << endl;
 		highscore->add_score(current_time, double(shot_hit) / double(shot_fired));
-		gamestate = "menu";
+		gamestate = "highscore";
 	}
 	else if (gamestate == "next_level")
 	{

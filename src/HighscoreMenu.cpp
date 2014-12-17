@@ -121,12 +121,12 @@ void Highscore_Menu::read_from_file()
 	    {
 	      iss.clear();
 	      iss.ignore(4711, '\n');
-	      cerr << "Error: high score read from bad file" << endl;
-	      exit(1);
+	      cerr << "Error: high score read from bad or empty file" << endl;
 	    }
-
-		scores.push_back(make_pair(name, score));
-
+	    else
+	    {
+	    	scores.push_back(make_pair(name, score));
+	    }
 	}
 	file.close();
 }
@@ -213,6 +213,7 @@ void Highscore_Menu::add_score(int time, double accuracy)
 			}
 		}
 		draw_buttons();
+		load_temporary_texture("_", (25 * current_char), 200);
 		load_temporary_texture(first_letter, 520, 200);
 		load_temporary_texture(second_letter, 545, 200);
 		load_temporary_texture(third_letter, 570, 200);
@@ -254,7 +255,7 @@ string Highscore_Menu::run()
 		//show the newly drawn things
 		SDL_RenderPresent(renderer);
 
-		SDL_Delay(10);
+		SDL_Delay(100);
 	}
 	scores.clear();
 

@@ -20,16 +20,23 @@ int main(int argc, char* argv[])
 	string state{"menu"};
 
 	// MAIN LOOP
-	while(state == "menu")
+	while (state != "exit")
 	{
-		state = highscore->run();
-		state = menu.run();
-		if (state == "play_state")
+		if (state == "highscore")
+		{
+			state = highscore->run();
+		}
+		else if (state == "menu")
+		{
+			state = menu.run();
+		}
+		else if (state == "play_state")
 		{
 			state = game.run();
 		}
 	}
 
 	delete highscore;
+	highscore = nullptr;
 	return 0;
 }

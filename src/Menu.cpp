@@ -65,12 +65,19 @@ void Menu::handle_inputs()
 				   buttons["quit_game"]->in_button_area(event.motion.x, event.motion.y)))
 		{
 			running = false;
+			gamestate = "exit";
 		}
 		else if ( event.type == SDL_MOUSEBUTTONDOWN &&
 				 buttons["start_game"]->in_button_area(event.motion.x, event.motion.y))
 		{
 			running = false;
 			gamestate = "play_state";
+		}
+		else if ( event.type == SDL_MOUSEBUTTONDOWN &&
+						 buttons["highscore_button"]->in_button_area(event.motion.x, event.motion.y))
+		{
+			running = false;
+			gamestate = "highscore";
 		}
 	}
 }
