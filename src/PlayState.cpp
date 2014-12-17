@@ -166,7 +166,6 @@ string Play_State::run()
 	else if (current_level == 3)
 	{
 		SDL_RenderClear(renderer);
-		cout << "done" << endl;
 		highscore->add_score(current_time, double(shot_hit) / double(shot_fired));
 		gamestate = "highscore";
 		current_level = 1;

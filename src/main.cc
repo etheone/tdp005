@@ -17,6 +17,7 @@ int main(int argc, char* argv[])
 	Menu menu(g.get_renderer());
 	Highscore_Menu* highscore = new Highscore_Menu(g.get_renderer(), "Highscores");
 	Play_State game(g.get_renderer(), highscore);
+
 	string state{"menu"};
 
 	// MAIN LOOP

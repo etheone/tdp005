@@ -329,6 +329,11 @@ void Level::enemy_collision_handler()
 		{
 		player->set_visible(false);
 		player->decrease_health();
+		animations.push_back(new Animation(textures["ship_explosion"],
+				player->get_middle_x(),
+				player->get_middle_y(),
+				480, 60,
+				8, 20));
 		}
 	}
 
@@ -362,7 +367,7 @@ void Level::player_collision_handler()
 
 	for (Shot*& s : shots)
 	{
-		if (s->intersect(p) && s->get_harmless_time() > 40)
+		if (s->intersect(p) && (s->get_harmless_time() > 40 || !(s->is_player_shot())))
 		{
 			player->decrease_health();
 			animations.push_back(new Animation(textures["ship_explosion"],

@@ -7,6 +7,7 @@
 
 #ifndef SRC_PLAYER_H_
 #define SRC_PLAYER_H_
+
 #include "Sprite.h"
 
 class Player : public Sprite

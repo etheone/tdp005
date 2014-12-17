@@ -213,12 +213,13 @@ void Highscore_Menu::add_score(int time, double accuracy)
 			}
 		}
 		draw_buttons();
-		load_temporary_texture("_", 520 + (25 * current_char), 200);
-		load_temporary_texture(first_letter, 520, 200);
-		load_temporary_texture(second_letter, 545, 200);
-		load_temporary_texture(third_letter, 570, 200);
-		load_temporary_texture(fourth_letter, 595, 200);
-		load_temporary_texture(fifth_letter, 620, 200);
+
+		load_temporary_texture("_", 490 + (40 * current_char), 300);
+		load_temporary_texture(first_letter, 490, 300);
+		load_temporary_texture(second_letter, 530, 300);
+		load_temporary_texture(third_letter, 570, 300);
+		load_temporary_texture(fourth_letter, 610, 300);
+		load_temporary_texture(fifth_letter, 650, 300);
 
 		SDL_RenderPresent(renderer);
 		SDL_Delay(100);
