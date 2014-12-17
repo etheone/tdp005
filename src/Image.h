@@ -24,8 +24,6 @@ public:
 
 	virtual void render_copy(SDL_Renderer*& renderer);
 
-	void logSDLError(std::ostream &os, const std::string &msg);
-
 	void set_visible(const bool& v);
 	bool get_visible();
 
@@ -40,7 +38,8 @@ protected:
 
 	bool visible;
 
-	const char* img_file;
+private:
+	void logSDLError(std::ostream &os, const std::string &msg);
 };
 
 #endif /* SRC_IMAGE_H_ */

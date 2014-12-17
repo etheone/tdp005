@@ -169,6 +169,7 @@ string Play_State::run()
 		cout << "done" << endl;
 		highscore->add_score(current_time, double(shot_hit) / double(shot_fired));
 		gamestate = "highscore";
+		current_level = 1;
 	}
 	else if (gamestate == "next_level")
 	{

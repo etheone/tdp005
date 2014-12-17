@@ -213,7 +213,7 @@ void Highscore_Menu::add_score(int time, double accuracy)
 			}
 		}
 		draw_buttons();
-		load_temporary_texture("_", (25 * current_char), 200);
+		load_temporary_texture("_", 520 + (25 * current_char), 200);
 		load_temporary_texture(first_letter, 520, 200);
 		load_temporary_texture(second_letter, 545, 200);
 		load_temporary_texture(third_letter, 570, 200);
