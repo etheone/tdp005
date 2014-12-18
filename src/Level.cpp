@@ -9,10 +9,10 @@
 
 using namespace std;
 
-Level::Level(SDL_Renderer*& renderer, int& level_time, int& shot_hit)
-:  player{nullptr}, level_time{level_time},
-   shot_hit{shot_hit}, renderer{renderer},
-   back({0, 50, 1200, 800})
+Level::Level(SDL_Renderer*& renderer, int& shot_hit)
+:  player{nullptr}, shot_hit{shot_hit},
+   renderer{renderer},
+   background({0, 50, 1200, 800})
 {
 	SDL_Surface* temp = IMG_Load("textures/20x20_wall.png");
 	textures["wall"] = SDL_CreateTextureFromSurface(renderer,temp);
@@ -155,18 +155,17 @@ void Level::load_level(const int& level)
 			}
 		}
 	}
-
 	file.close();
 }
 
-bool Level::no_enemies()
+bool Level::no_enemies() const
 {
 	return enemies.empty();
 }
 
 void Level::draw_level()
 {
-	SDL_RenderCopy(renderer, textures["background"], nullptr, &back);
+	SDL_RenderCopy(renderer, textures["background"], nullptr, &background);
 
 	player->render_copy(renderer);
 
@@ -201,11 +200,6 @@ void Level::draw_level()
 			break;
 		}
 	}
-}
-
-void Level::update_time()
-{
-	--level_time;
 }
 
 void Level::update_enemy()
@@ -289,11 +283,6 @@ void Level::add_to_shots(const double& x, const double& y, const int& w, const i
 							 speed, b, player_shot));
 }
 
-int Level::get_time() const
-{
-	return level_time;
-}
-
 void Level::enemy_collision_handler()
 {
 	Sprite* e{nullptr};
@@ -306,17 +295,17 @@ void Level::enemy_collision_handler()
 		player->set_visible(false);
 		player->decrease_health();
 		animations.push_back(new Animation(textures["ship_explosion"],
-				player->get_middle_x(),
-				player->get_middle_y(),
-				480, 60,
-				8, 20));
+										player->get_middle_x(),
+										player->get_middle_y(),
+										480, 60,
+										8, 20));
 		}
 	}
 
 	e = nullptr;
 }
 
-bool Level::shots_empty()
+bool Level::shots_empty() const
 {
 	return shots.empty();
 }
@@ -333,10 +322,10 @@ void Level::player_collision_handler()
 			cout << "you crashed" << endl;
 			player->decrease_health();
 			animations.push_back(new Animation(textures["ship_explosion"],
-														player->get_middle_x(),
-														player->get_middle_y(),
-														480, 60,
-														8, 20));
+												player->get_middle_x(),
+												player->get_middle_y(),
+												480, 60,
+												8, 20));
 			player->set_visible(false);
 		}
 	}
@@ -347,10 +336,10 @@ void Level::player_collision_handler()
 		{
 			player->decrease_health();
 			animations.push_back(new Animation(textures["ship_explosion"],
-																	player->get_middle_x(),
-																	player->get_middle_y(),
-																	480, 60,
-																	8, 20));
+											player->get_middle_x(),
+											player->get_middle_y(),
+											480, 60,
+											8, 20));
 			player->set_visible(false);
 		}
 	}

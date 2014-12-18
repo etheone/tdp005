@@ -17,14 +17,33 @@
 #include <fstream>
 #include <sstream>
 
+//! Hihghscore_Menu, derived from Abstract_Gamestate
+/*!
+	Handles reading from, and writing to the specified
+	highscore file (.txt).
+	It also renderers the score data to the screen with
+	the run() method.
+*/
 class Highscore_Menu : public Abstract_Gamestate
 {
 public:
 	Highscore_Menu(SDL_Renderer*& renderer, std::string file);
 	virtual ~Highscore_Menu();
 
+	//! Renders a "add_score" menu interface.
+	/*!
+		A loop that renders a menu that handles keyboard text input from
+		the user. It is interupted by the click of a button and then
+		proceeds with overwriting the highscore file with the newly
+		received data.
+	*/
 	void add_score(int time, double accuracy);
 
+	//! Renders a highscore list interface.
+	/*!
+		A loop that renders a menu that lists the top scores
+		read from file. Is interupted by the klick of a button.
+	 */
 	std::string run();
 
 private:

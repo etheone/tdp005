@@ -12,7 +12,6 @@ Button::Button(const double& x, const double& y,
 			   SDL_Texture*& texture)
 : Image{x, y, w, h, texture}
 {
-	// TODO Auto-generated constructor stub
 }
 
 Button::~Button()

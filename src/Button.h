@@ -10,6 +10,10 @@
 
 #include "Image.h"
 
+//! A simple Button class
+/*!
+	Consists of a texture reference and an area.
+*/
 class Button : public Image
 {
 public:
@@ -19,7 +23,6 @@ public:
 	~Button();
 
 	bool in_button_area(const int& x, const int& y);
-
 };
 
 #endif /* SRC_BUTTON_H_ */

@@ -6,6 +6,10 @@
 
 #include "Sprite.h"
 
+//! A simple wall
+/*!
+ 	 It is an image, with substance.
+ */
 class Wall : public Sprite
 {
 

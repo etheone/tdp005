@@ -7,8 +7,10 @@
 
 #include "Player.h"
 
-Player::Player(double x, double y, int width, int height,
-		double angle, SDL_Texture*& texture, int health)
+Player::Player(const double& x, const double& y,
+		   const int& width, const int& height,
+		   const double& angle, SDL_Texture*& texture,
+		   const int& health)
 : Sprite(x, y, width, height, angle, texture), health{health}
 {
 }

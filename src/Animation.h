@@ -10,6 +10,13 @@
 
 #include "Image.h"
 
+//! An animation class
+/*!
+Handles and draws the animation-sheet texture reference.
+Information such as position, number of frames in the texture
+and desired amount of updates etc, are specified in the constructor
+when the object is instantiated.
+*/
 class Animation : public Image
 {
 public:
@@ -28,12 +35,14 @@ public:
 
 private:
 	SDL_Rect animation_rect;
+
 	const int updates_per_frame;
 	const int frames;
+
 	int frame;
 	int updates_to_go;
-	bool alive;
 
+	bool alive;
 };
 
 #endif /* SRC_ANIMATION_H_ */

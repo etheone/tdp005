@@ -9,6 +9,13 @@
 #include "Sprite.h"
 #include "wall.h"
 
+
+//! Shot class
+/*!
+ 	 Derived from sprite with a lot of extra functionality.
+ 	 Other than the members inherited from sprite it also has
+ 	 speed and bounce count.
+ */
 class Shot : public Sprite
 {
 public:
@@ -33,6 +40,7 @@ public:
 	bool outside_screen() const;
 
 	void move_back();
+
 	void update_pos();
 	void update_pos_simulation();
 
@@ -43,7 +51,7 @@ private:
 	bool player_shot;
 
 	std::pair<double, double> previous_position;
-	std::map<std::pair<double, double>, double> angles_queue;
+	std::vector<std::pair< std::pair< double, double >, double > > angles_queue;
 
 	std::pair<double, double> find_collision_point(Sprite*&);
 	void update_position_inner();

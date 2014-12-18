@@ -13,6 +13,10 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
+//!The window and renderer constructor and destructor
+/*!
+	That's all there is to it.
+*/
 class Game_Screen
 {
 public:

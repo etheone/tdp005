@@ -16,6 +16,13 @@
 
 const double PI = 3.14159265;
 
+//! The superclass for all game-objects.
+/*!
+ 	 Inherits from the image class.
+ 	 It also contains the member "angle" and overwrites the rendering
+ 	 function with a new one, which include angle in its calculation and
+ 	 rotates the texture accordingly.
+ */
 class Sprite : public Image
 {
 public:

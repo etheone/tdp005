@@ -11,6 +11,11 @@
 #include "AbstractGamestate.h"
 #include <map>
 
+//! A menu screen
+/*!
+ 	 Responsible for drawing a menu screen filled with clickable
+ 	 buttons that redirects the player to another state.
+ */
 class Menu : public Abstract_Gamestate
 {
 public:

@@ -9,11 +9,12 @@
 
 using namespace std;
 
-Animation::Animation(SDL_Texture*& texture, const double& x, const double& y,
-				const int& width, const int& height,
-				const int& frames, const int& updates)
-:Image(x, y, width, height, texture),updates_per_frame{updates}, frames{frames},
- frame{0}, updates_to_go{updates}, alive{true}
+Animation::Animation(SDL_Texture*& texture, const double& x,
+				const double& y, const int& width,
+				const int& height, const int& frames,
+				const int& updates)
+:Image(x, y, width, height, texture),updates_per_frame{updates},
+ frames{frames}, frame{0}, updates_to_go{updates}, alive{true}
 {
 	rectangle.w /= frames;
 	rectangle.x = exact_x - rectangle.w/2;

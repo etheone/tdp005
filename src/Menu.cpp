@@ -34,16 +34,18 @@ Menu::~Menu()
 	//delete buttons;
 	for (map<string, Button*>::iterator i = buttons.begin();
 				i != buttons.end(); ++i)
-		{
-			delete i->second;
-			i->second = nullptr;
-		}
+	{
+		delete i->second;
+		i->second = nullptr;
+	}
 
+	//delete textures
 	for (map<string, SDL_Texture*>::iterator i = textures.begin();
 				i != textures.end(); ++i)
 	{
 		SDL_DestroyTexture(i->second);
 	}
+
 	TTF_CloseFont(font);
 }
 

@@ -12,6 +12,12 @@
 #include "Level.h"
 #include "HighscoreMenu.h"
 
+//! Handle's the game logic
+/*!
+ 	 The run() method creates a new level and starts the main loop
+ 	 which updates every game-object and handles user input appropriately.
+ 	 This class also interacts with a reference to a highscore object.
+ */
 class Play_State : public Abstract_Gamestate
 {
 public:
@@ -36,8 +42,14 @@ private:
 
 	bool player_clicked(int x , int y);
 
+	/*!The inner function of the run() method. It contains
+	   the actual game-loop and handles updates of the game_objects.
+	*/
 	void run_game_loop();
+
+	//! Destroys the level object and frees the memory.
 	void clear_play_state();
+
 	void handle_inputs();
 };
 

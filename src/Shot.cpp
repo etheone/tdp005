@@ -5,9 +5,12 @@ using namespace std;
 Shot::Shot(const double& x, const double& y,
 		const int& width, const int& height,
 		const double& angle, SDL_Texture*& texture,
-		const int& speed, const int& bounce_count, const bool& player_shot)
-	: Sprite(x, y, width, height, angle, texture), bounce_count{bounce_count},
-	  speed{speed}, harmless_time{0}, player_shot{player_shot}, previous_position{x, y}
+		const int& speed, const int& bounce_count,
+		const bool& player_shot)
+: Sprite(x, y, width, height, angle, texture),
+  bounce_count{bounce_count}, speed{speed},
+  harmless_time{0}, player_shot{player_shot},
+  previous_position{x, y}
 {
 }
 
@@ -85,7 +88,7 @@ int Shot::get_speed() const
 
 void Shot::angle_to_queue(pair<double, double> p, double a)
 {
-	angles_queue[p] = a;
+	angles_queue.push_back(make_pair(p, a));
 }
 
 bool Shot::outside_screen() const

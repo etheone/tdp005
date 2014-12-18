@@ -15,7 +15,7 @@ Abstract_Gamestate::Abstract_Gamestate(SDL_Renderer*& renderer,
 {
 
 	font = TTF_OpenFont("FreeSans.ttf", 36);
-	if(font == nullptr)
+	if (font == nullptr)
 	{
 		cerr << "OpenFont error" << endl;
 	}

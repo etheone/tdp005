@@ -26,7 +26,7 @@ Game_Screen::Game_Screen(const int& screen_width, const int& screen_height)
 
 		//create the window
 		window = SDL_CreateWindow("SDL_Test",SDL_WINDOWPOS_UNDEFINED,
-				SDL_WINDOWPOS_UNDEFINED, screen_width, screen_height, 0);
+				0, screen_width, screen_height, 0);
 
 		if (window == nullptr)
 		{

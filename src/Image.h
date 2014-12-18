@@ -16,6 +16,11 @@
 const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 850;
 
+//! The abstract superclass to all drawn objects.
+/*!
+	Basically just an image consisting of a texture reference,
+	a position with double coordinates, and a SDL_Rect.
+ */
 class Image {
 public:
 	Image(const double& x, const double& y, const int& width,

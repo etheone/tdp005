@@ -14,6 +14,13 @@
 #include <SDL2/SDL_ttf.h>
 #include "Button.h"
 
+//! An abstract "state" class.
+/*!
+This class stores all things every state have in common,
+such as a reference to the SDL_Renderer, the string "gamestate"
+and necessary members and method for rendering simple text
+to the game-screen
+*/
 class Abstract_Gamestate
 {
 public:
@@ -33,8 +40,11 @@ protected:
 	SDL_Rect text_rect;
 	SDL_Texture* temp_score;
 
+	//! Creates and renders the text message to the screen.
+	/*!
+	The texture is also destroyed here, after being rendered.
+	*/
 	void load_temporary_texture(std::string message, int x, int y);
-
 };
 
 #endif /* SRC_ABSTRACTGAMESTATE_H_ */

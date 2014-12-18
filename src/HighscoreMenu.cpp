@@ -25,10 +25,10 @@ Highscore_Menu::~Highscore_Menu()
 	//delete buttons;
 	for (map<string, Button*>::iterator i = buttons.begin();
 				i != buttons.end(); ++i)
-		{
-			delete i->second;
-			i->second = nullptr;
-		}
+	{
+		delete i->second;
+		i->second = nullptr;
+	}
 
 	for (map<string, SDL_Texture*>::iterator i = textures.begin();
 				i != textures.end(); ++i)

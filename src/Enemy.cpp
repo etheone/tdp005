@@ -6,8 +6,10 @@
 
 using namespace std;
 
-Enemy::Enemy(double x, double y, int width, int height,
-		double angle, SDL_Texture*& texture, int health)
+Enemy::Enemy(const double& x, const double& y,
+		  const int& width, const int& height,
+		  const double& angle, SDL_Texture*& texture,
+		  const int& health)
 : Player(x, y, width, height, angle, texture, health), speed{1}, update_counter{0}
 {
 }
@@ -32,6 +34,18 @@ void Enemy::update_pos()
 
 void Enemy::update(const vector<Sprite*>& walls)
 {
+
+	if (update_counter % 10 == 0)
+	{
+		update_pos();
+		if (any_of(walls.begin(), walls.end(),
+				[this](Sprite* s){return intersect(s);}))
+		{
+			angle += 180;
+			update_pos();
+		}
+	}
+
 	if (update_counter == 100)
 	{
 		// Random is declared here because eclipse can't compile properly otherwise.
@@ -39,18 +53,6 @@ void Enemy::update(const vector<Sprite*>& walls)
 		uniform_int_distribution<int> distribution(0, 360);
 		angle = distribution(randint);
 		update_counter = 0;
-	}
-
-	else if (any_of(walls.begin(), walls.end(),
-			[this](Sprite* s){return intersect(s);}))
-	{
-		angle += 180;
-		update_pos();
-	}
-
-	else if (update_counter % 10 == 0)
-	{
-		update_pos();
 	}
 
 	++update_counter;

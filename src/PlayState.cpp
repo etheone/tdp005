@@ -23,7 +23,6 @@ Play_State::~Play_State()
 {
 	clear_play_state();
 	TTF_CloseFont( font );
-
 }
 
 void Play_State::clear_play_state()
@@ -147,7 +146,7 @@ void Play_State::run_game_loop()
 			level->player_collision_handler();
 			if (time_count % 10 == 0)
 			{
-				level->update_time();
+				--current_time;
 			}
 
 			if (!level->shots_empty())
@@ -201,7 +200,7 @@ string Play_State::run()
 	space_down = false;
 	gamestate = "freeze_state";
 
-	level = new Level(renderer, current_time, shot_hit);
+	level = new Level(renderer, shot_hit);
 	level->load_level(current_level);
 
 	run_game_loop();
