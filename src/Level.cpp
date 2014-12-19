@@ -319,7 +319,6 @@ void Level::player_collision_handler()
 	{
 		if (s->intersect(p))
 		{
-			cout << "you crashed" << endl;
 			player->decrease_health();
 			animations.push_back(new Animation(textures["ship_explosion"],
 												player->get_middle_x(),

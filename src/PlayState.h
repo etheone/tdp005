@@ -36,7 +36,12 @@ private:
 	bool space_down;
 	double diff_x;
 	double diff_y;
+
+	/*! Keeps track of the number of updates remaining
+	before player angle is to be changed.
+	*/
 	int angle_wait;
+
 	int shot_fired;
 	int shot_hit;
 

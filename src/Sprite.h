@@ -47,7 +47,10 @@ public:
 	virtual bool intersect(Sprite*&) const;
 	virtual void render_copy(SDL_Renderer*& renderer);
 
+	//! Used by all sprites except wall to set the correct new angle.
 	void set_angle(const double& new_angle);
+
+	//! Sets the new top left corner position for players, enemies and shots.
 	void set_position(const double& x, const double& y);
 
 	void increase_width(const int& increase);

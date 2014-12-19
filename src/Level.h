@@ -39,16 +39,14 @@ public:
 	void draw_level();
 
 	/*!
-	 	 Simulates the shots path and adds coordinates for
-	 	 wall collisions and calculated angle changes to the
-	 	 shots angle_queue vector.
+	 	 Simulates the shot path and adds coordinates for
+	 	 wall collisions. Calculated angle changes is added to the
 	 */
 	void simulate_shot_path();
 
 	void update_shots();
 	void update_enemy();
 	void update_time();
-
 
 	void player_collision_handler();
 

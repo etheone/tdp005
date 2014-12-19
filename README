@@ -1,0 +1,14 @@
+*********HOW TO START THE GAME:************
+
+Needed libraries: libSDL2-dev, libSDL2-image, libSDL2-ttf.
+
+How to compile:
+Start terminal.
+
+Go to the directory where you've put the game.
+
+Make with the command make
+
+Start with the command ./Starcrossed.
+
+ENJOY!

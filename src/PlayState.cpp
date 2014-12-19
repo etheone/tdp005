@@ -164,21 +164,21 @@ void Play_State::run_game_loop()
 		load_temporary_texture( "Shots hit " + to_string(shot_hit), 850, 5);
 		if (gamestate == "freeze_state")
 		{
-			load_temporary_texture( "Click the pretty player-ship and prepare to rage", 230, 400);
+			load_temporary_texture( "Click the player ship to start", 400, 400);
 
 		}
 		else if (gamestate != "play_state")
 		{
-			load_temporary_texture( "Click anywhere on screen to continue", 300, 400);
+			load_temporary_texture( "Click anywhere on screen to continue", 350, 400);
 
 		}
 		if (gamestate == "fail")
 		{
-			load_temporary_texture( "FAIL!", 550, 300);
+			load_temporary_texture( "Level failed!", 550, 300);
 		}
 		else if (gamestate == "next_level")
 		{
-			load_temporary_texture( "SUCCESS!", 520, 300);
+			load_temporary_texture( "Level complete!", 480, 300);
 		}
 
 		SDL_RenderPresent(renderer);
